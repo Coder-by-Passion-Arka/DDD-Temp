@@ -126,10 +126,9 @@
 //   next();
 // });
 
-
 // export default mongoose.model("Submission", submissionSchema);
 
-// ===================================================== // 
+// ===================================================== //
 
 import mongoose from "mongoose";
 
@@ -385,7 +384,7 @@ submissionSchema.virtual("evaluationProgress").get(function () {
 
   const total = this.evaluationAssignments.length;
   const completed = this.evaluationAssignments.filter(
-    (eval) => eval.status === "completed"
+    (evaluations) => evaluations.status === "completed"
   ).length;
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
@@ -418,7 +417,8 @@ submissionSchema.methods.updateEvaluationStatus = function (
   completedAt = null
 ) {
   const evalAssignment = this.evaluationAssignments.find(
-    (eval) => eval.evaluationId.toString() === evaluationId.toString()
+    (evaluations) =>
+      evaluations.evaluationId.toString() === evaluationId.toString()
   );
 
   if (evalAssignment) {
@@ -429,7 +429,7 @@ submissionSchema.methods.updateEvaluationStatus = function (
 
     // Check if all evaluations are completed
     const allCompleted = this.evaluationAssignments.every(
-      (eval) => eval.status === "completed"
+      (evaluations) => evaluations.status === "completed"
     );
     if (allCompleted && this.status === "under_evaluation") {
       this.status = "evaluated";
@@ -453,7 +453,7 @@ submissionSchema.methods.compileFinalEvaluation = async function () {
 
     // Calculate average scores
     const totalScore = evaluations.reduce(
-      (sum, eval) => sum + eval.totalScore,
+      (sum, evaluations) => sum + evaluations.totalScore,
       0
     );
     const maxScore = evaluations[0].maxTotalScore; // Assuming same max score for all
@@ -476,7 +476,7 @@ submissionSchema.methods.compileFinalEvaluation = async function () {
 
     // Compile feedback
     const allFeedback = evaluations
-      .map((eval) => eval.overallFeedback)
+      .map((evaluations) => evaluations.overallFeedback)
       .filter(Boolean);
     const strengths = [];
     const improvements = [];

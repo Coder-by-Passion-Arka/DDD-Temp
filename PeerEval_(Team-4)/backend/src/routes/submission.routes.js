@@ -6,7 +6,7 @@ import {
   deleteSubmission,
   getSubmissionEvaluations,
 } from "../controllers/submission.controller.js";
-import { verifyJWT, isTeacherOrAdmin } from "../middlewares/auth.middleware.js";
+import { verifyJWT, isTeacherOrAdmin, isAdmin } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

@@ -4,7 +4,7 @@ import courseRoutes from "./course.routes.js";
 import assignmentRoutes from "./assignment.routes.js";
 import evaluationRoutes from "./evaluation.routes.js";
 import submissionRoutes from "./submission.routes.js";
-import dashboardRoutes from "./dashboard.routes.js";
+// import dashboardRoutes from "./dashboard.routes.js";
 import uploadRoutes from "./upload.routes.js";
 import {
   corsMiddleware,

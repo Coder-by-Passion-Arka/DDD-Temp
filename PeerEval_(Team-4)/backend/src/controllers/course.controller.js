@@ -1,9 +1,9 @@
 import Course from "../models/course.models.js";
 import User from "../models/user.models.js";
 import Assignment from "../models/assignment.models.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "express-async-handler";
+import ApiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 
 // Create a new course

@@ -2,11 +2,11 @@ import Evaluation from "../models/evaluation.models.js";
 import Assignment from "../models/assignment.models.js";
 import Submission from "../models/submissions.models.js";
 import User from "../models/user.models.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "express-async-handler";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
-import EvaluationAssignmentService from "../services/evaluation-assignment.service.js";
+import EvaluationAssignmentService from "../services/evaluationAssigner.js";
 
 // Get evaluations for current user (all types)
 const getUserEvaluations = asyncHandler(async (req, res) => {

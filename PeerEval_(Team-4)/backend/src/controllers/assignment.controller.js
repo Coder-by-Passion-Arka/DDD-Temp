@@ -2,9 +2,9 @@ import Assignment from "../models/assignment.models.js";
 import Course from "../models/course.models.js";
 import Submission from "../models/submissions.models.js";
 import Evaluation from "../models/evaluation.models.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "express-async-handler";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 

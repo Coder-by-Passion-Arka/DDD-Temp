@@ -9,7 +9,7 @@ import {
   changePassword,
   getCurrentUser,
   updateAccountDetails,
-} from "../controllers/user.controller.js";
+} from "../controllers/auth.controller.js";
 
 const router = Router();
 
@@ -19,14 +19,14 @@ const requireRole = (...allowedRoles) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "Authentication required"
+        message: "Authentication required",
       });
     }
 
     if (!allowedRoles.includes(req.user.userRole)) {
       return res.status(403).json({
         success: false,
-        message: `Access denied. Required role: ${allowedRoles.join(' or ')}`
+        message: `Access denied. Required role: ${allowedRoles.join(" or ")}`,
       });
     }
 
@@ -45,14 +45,14 @@ const canAccessProfile = (req, res, next) => {
   }
 
   // Teachers and admins can access any profile
-  if (['teacher', 'admin'].includes(requestingUser.userRole)) {
+  if (["teacher", "admin"].includes(requestingUser.userRole)) {
     return next();
   }
 
   // Students can only access their own profile
   return res.status(403).json({
     success: false,
-    message: "Students can only access their own profile"
+    message: "Students can only access their own profile",
   });
 };
 
@@ -101,11 +101,9 @@ router.route("/update-profile").patch(
 // Role-based Protected Routes //
 
 // 8. Get specific user profile (with role-based access control)
-router.route("/profile/:userId").get(
-  verifyJWT, 
-  canAccessProfile, 
-  getCurrentUser
-);
+router
+  .route("/profile/:userId")
+  .get(verifyJWT, canAccessProfile, getCurrentUser);
 
 // 9. Admin-only routes
 router.route("/admin/users").get(
@@ -115,7 +113,7 @@ router.route("/admin/users").get(
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "Admin user management endpoint not implemented yet"
+      message: "Admin user management endpoint not implemented yet",
     });
   }
 );
@@ -127,7 +125,7 @@ router.route("/admin/users/:userId").patch(
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "Admin user update endpoint not implemented yet"
+      message: "Admin user update endpoint not implemented yet",
     });
   }
 );
@@ -139,7 +137,7 @@ router.route("/admin/users/:userId/deactivate").patch(
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "User deactivation endpoint not implemented yet"
+      message: "User deactivation endpoint not implemented yet",
     });
   }
 );
@@ -152,7 +150,7 @@ router.route("/teacher/students").get(
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "Teacher students endpoint not implemented yet"
+      message: "Teacher students endpoint not implemented yet",
     });
   }
 );
@@ -164,7 +162,7 @@ router.route("/teacher/assignments").post(
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "Create assignment endpoint not implemented yet"
+      message: "Create assignment endpoint not implemented yet",
     });
   }
 );
@@ -177,7 +175,7 @@ router.route("/search/students").get(
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "Student search endpoint not implemented yet"
+      message: "Student search endpoint not implemented yet",
     });
   }
 );
@@ -188,22 +186,22 @@ router.route("/dashboard/:role").get(
   (req, res, next) => {
     const { role } = req.params;
     const userRole = req.user.userRole;
-    
+
     // Users can only access their own role's dashboard
     if (role !== userRole) {
       return res.status(403).json({
         success: false,
-        message: "Access denied. You can only access your own role's dashboard"
+        message: "Access denied. You can only access your own role's dashboard",
       });
     }
-    
+
     next();
   },
   // TODO: Add getDashboardData controller
   (req, res) => {
     res.status(501).json({
       success: false,
-      message: "Dashboard data endpoint not implemented yet"
+      message: "Dashboard data endpoint not implemented yet",
     });
   }
 );
@@ -213,31 +211,31 @@ router.route("/dashboard/:role").get(
 // Error handling middleware for this router
 router.use((error, req, res, next) => {
   console.error("User routes error:", error);
-  
-  if (error.name === 'ValidationError') {
+
+  if (error.name === "ValidationError") {
     return res.status(400).json({
       success: false,
       message: "Validation error",
-      errors: Object.values(error.errors).map(err => err.message)
+      errors: Object.values(error.errors).map((err) => err.message),
     });
   }
-  
+
   if (error.code === 11000) {
     return res.status(409).json({
       success: false,
-      message: "Duplicate field value entered"
+      message: "Duplicate field value entered",
     });
   }
-  
+
   res.status(error.statusCode || 500).json({
     success: false,
-    message: error.message || "Internal server error"
+    message: error.message || "Internal server error",
   });
 });
 
 export default router;
 
-// ====================================================== // 
+// ====================================================== //
 
 // import { Router } from "express";
 // import {
