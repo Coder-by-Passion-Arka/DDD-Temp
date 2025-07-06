@@ -1,0 +1,33 @@
+{
+    Name: "Student_1",
+    Email: "stud_1@gmail.com",
+    Password: "Student001",
+    Address: "Somewhere in India",
+    Phone: "+91 0000000001",
+    Role: "Student",
+    Skills: ["JavaScript", "React", "Node.js", "Python"],
+    Goals: [
+        {
+            Task: "Finish DAA Quiz",
+            DueTime: "10:00 AM",
+            DueDate: "2024-01-15",
+            Status: "in-progress",
+            Progress: 40,
+            Priority: 0,
+        },
+        {
+            Task: "Review OS Notes",
+            DueTime: "12:00 PM",
+            Status: "deadline-approaching",
+            Progress: 0,
+            Priority: 0,
+        },
+        {
+            Task: "Push updates to GitHub",
+            DueTime: "03:00 PM",
+            Status: "completed",
+            Progress: 100,
+            Priority: 0,
+        },
+    ]
+}

@@ -50,6 +50,13 @@ DDD-Team-4/
 │ │ │ └── user.models.js
 │ │ ├── routes/
 │ │ │ ├── goals.routes.js
+│ │ │ ├── allRouters.routes.js
+│ │ │ ├── assignments.routes.js
+│ │ │ ├── course.routes.js
+│ │ │ ├── evaluation.routes.js
+│ │ │ ├── goals.routes.js
+│ │ │ ├── submission.routes.js
+│ │ │ ├── upload.routes.js
 │ │ │ ├── leaderboard.routes.js
 │ │ │ ├── user.routes.js
 │ │ │ └── healthCheck.routes.js
@@ -57,15 +64,28 @@ DDD-Team-4/
 │ │ │ └── index.js
 │ │ ├── controllers/
 │ │ │ ├── leaderboard.controller.js
+│ │ │ ├── assignment.models.js
+│ │ │ ├── achievement.models.js
+│ │ │ ├── course.models.js
+│ │ │ ├── evaluation.models.js
 │ │ │ ├── goals.controller.js
 │ │ │ ├── healthCheck.controller.js
+│ │ │ ├── leaderboard.controller.js
+│ │ │ ├── submission.controller.js
 │ │ │ └── user.controller.js
 │ │ ├── utils/
+│ │ │ ├── arrayUtils.js
+│ │ │ ├── dateUtils.js
+│ │ │ ├── fileUtils.js
+│ │ │ ├── objectUtils.js
+│ │ │ ├── string.js
 │ │ │ ├── apiError.js
 │ │ │ └── apiResponse.js
 │ │ ├── services/
+│ │ │ └── evaluationAssigner.js
 │ │ ├── middlewares/
 │ │ │ ├── auth.middleware.js
+│ │ │ ├── cloudinary.models.js
 │ │ │ ├── errorHandling.middleware.js
 │ │ │ ├── roleAuth.middleware.js
 │ │ │ └── multer.middleware.js
