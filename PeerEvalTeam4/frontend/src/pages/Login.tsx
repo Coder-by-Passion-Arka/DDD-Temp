@@ -289,6 +289,7 @@ import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { signInWithGoogle, signInWithGithub } from "../services/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/useToast";
 import { AxiosError } from "axios";
@@ -434,12 +435,41 @@ const Login: React.FC = () => {
   };
 
   const handleSocialAuth = (provider: string) => {
-    // Redirect to the appropriate auth endpoint
-    const authEndpoint = provider.toLowerCase() === "google" 
-      ? "http://localhost:8024/api/v1/auth/google"
-      : "http://localhost:8024/api/v1/auth/github";
-    
-    window.location.href = authEndpoint;
+    setIsLoading(true);
+    const authPromise = provider.toLowerCase() === "google" 
+      ? signInWithGoogle()
+      : signInWithGithub();
+
+    toast.promise(
+      authPromise.then(async (user) => {
+        if (user) {
+          // Get the ID token
+          const idToken = await user.getIdToken();
+          
+          // Send the token to your backend
+          const response = await apiService.post('/auth/firebase', { idToken });
+          
+          // Handle the response similar to regular login
+          const { accessToken, refreshToken } = response;
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          
+          // Redirect to dashboard or profile completion if needed
+          if (response.needsProfileCompletion) {
+            // Will be handled by AuthContext
+          }
+          
+          window.location.href = "/dashboard";
+        }
+      }),
+      {
+        loading: `Signing in with ${provider}...`,
+        success: `${provider} authentication successful!`,
+        error: (err) => `${provider} authentication failed: ${err.message}`
+      }
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const handleForgotPassword = () => {

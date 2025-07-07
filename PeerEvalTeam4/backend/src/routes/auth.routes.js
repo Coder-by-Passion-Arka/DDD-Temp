@@ -2,6 +2,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import passport from "../config/passport.js";
+import { handleFirebaseAuth } from "../controllers/firebaseAuth.controller.js";
 import {
   refreshAccessToken,
   registerUser,
@@ -79,6 +80,9 @@ router.route("/login").post(loginUser);
 
 // 3. Refresh access token
 router.route("/refresh-token").post(refreshAccessToken);
+
+// Firebase Authentication
+router.route("/firebase").post(handleFirebaseAuth);
 
 // Google Authentication Routes
 router.route("/google").get(passport.authenticate("google", { scope: ["profile", "email"] }));
