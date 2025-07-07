@@ -3,7 +3,7 @@ import Course from "../models/course.models.js";
 import Submission from "../models/submissions.models.js";
 import Evaluation from "../models/evaluation.models.js";
 import asyncHandler from "express-async-handler";
-import ApiError from "../utils/ApiError.js";
+import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";

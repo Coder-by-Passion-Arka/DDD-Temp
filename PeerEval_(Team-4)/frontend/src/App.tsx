@@ -1,5 +1,5 @@
 // ================================ React Imports ============================ //
-import React from "react";
+import React,{useState,useEffect} from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,7 +14,7 @@ import SocialProfileCompletion from "./components/SocialProfileCompletion.tsx";
 
 // ================================ Pages Imports ================================ //
 import DashboardHome from "./pages/Dashboard.tsx";
-import AssignmentsPage from "./pages/Assignments.tsx";
+import AssignmentPage from "./pages/Assignments.tsx";
 import EvaluationsPage from "./pages/Evaluations.tsx";
 import AnalyticsPage from "./pages/Analytics.tsx";
 import AchievementsPage from "./pages/Achievements.tsx";
@@ -125,7 +125,7 @@ const AppContent: React.FC = () => {
               <Route path="dashboard" element={<DashboardHome />} />
               <Route path="courses" element={<Courses />} />
               <Route path="find-student" element={<GoToStudentProfile />} />
-              <Route path="assignments" element={<AssignmentsPage />} />
+              <Route path="assignments" element={<AssignmentPage />} />
               <Route path="evaluations" element={<EvaluationsPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="achievements" element={<AchievementsPage />} />

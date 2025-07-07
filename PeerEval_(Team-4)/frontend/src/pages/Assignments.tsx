@@ -1726,4 +1726,4 @@ const EvaluationSetupModal: React.FC<{
   );
 };
 
-export default Assignment;
+export default AssignmentPage;

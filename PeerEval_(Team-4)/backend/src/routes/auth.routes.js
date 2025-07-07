@@ -3,7 +3,6 @@ import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import passport from "../config/passport.js";
 import { handleFirebaseAuth } from "../controllers/firebaseAuth.controller.js";
-import { handleFirebaseAuth } from "../controllers/firebaseAuth.controller.js";
 import {
   refreshAccessToken,
   registerUser,
