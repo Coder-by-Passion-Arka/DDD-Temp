@@ -752,6 +752,8 @@ const Register: React.FC = () => {
                   onChange={handleInputChange}
                   disabled={isLoading}
                   className="text-indigo-600 focus:ring-indigo-500"
+  )
+}
                 />
                 <span className="text-gray-700 dark:text-gray-300">
                   Teacher
