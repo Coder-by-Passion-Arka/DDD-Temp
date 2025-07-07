@@ -37,7 +37,7 @@ router.use("/courses", courseRoutes);
 router.use("/assignments", assignmentRoutes);
 router.use("/evaluations", evaluationRoutes);
 router.use("/submissions", submissionRoutes);
-router.use("/dashboard", dashboardRoutes);
+//router.use("/dashboard", dashboardRoutes);
 router.use("/upload", uploadRoutes);
 
 // API info route
@@ -53,7 +53,7 @@ router.get("/", (req, res) => {
       assignments: "/api/v1/assignments",
       evaluations: "/api/v1/evaluations",
       submissions: "/api/v1/submissions",
-      dashboard: "/api/v1/dashboard",
+      //dashboard: "/api/v1/dashboard",
       upload: "/api/v1/upload",
     },
   });

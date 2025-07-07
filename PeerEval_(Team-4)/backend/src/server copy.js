@@ -7,15 +7,15 @@ import logger from "./logger.js";
 import { fileURLToPath } from "url";
 import path from "path";
 
-// Import routes
-import healthCheckRouter from "./routes/healthCheck.routes.js";
-import userRouter from "./routes/user.routes.js";
-import errorHandler from "./middlewares/errorHandling.middleware.js";
+// // Import routes
+// import healthCheckRouter from "./routes/healthCheck.route.js";
+// import userRouter from "./routes/user.route.js";
+// import errorHandler from "./middlewares/errorHandling.middleware.js";
+// import goalsRouter from "./routes/goals.route.js";
 
 dotenv.config({
   path: "src/.env",
 });
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -25,7 +25,6 @@ const server = express();
 const morganFormat =
   ":method :url :status :res[content-length] - :response-time ms";
 
-// Enable CORS for cross-origin requests
 // Enable CORS for cross-origin requests
 // CORS configuration
 const corsOptions = {
@@ -60,10 +59,15 @@ server.use(
 );
 
 // Middleware to parse JSON data
-server.use(express.json({ limit: "1mb" }));
+server.use(express.json({ 
+  limit: "1mb" 
+}));
 
 // Parse URL-encoded data
-server.use(express.urlencoded({ extended: true, limit: "1mb" }));
+server.use(express.urlencoded({ 
+  extended: true, 
+  limit: "1mb" 
+}));
 
 // Serve static files from public folder
 server.use(express.static(
@@ -76,7 +80,7 @@ server.use(cookieParser());
 // Serve static files
 server.use(express.static("../public"));
 
-// Morgan logging middleware
+// Morgan logging middleware setup (for development)
 server.use(
   morgan(morganFormat, {
     stream: {
@@ -93,26 +97,19 @@ server.use(
   })
 );
 
+// Import routes all the routes for cleaner code
+import apiRoutes from "./routes/allRoutes.routes.js";
+import { errorHandler, notFound } from "./middlewares/auth.middleware.js";
 
-// Routes
-server.use("/api/healthCheck", healthCheckRouter);
-server.use("/api/user", userRouter);
-//server.use("/api/auth", authRoutes);
-// server.use("/courses", courseRoutes);
-// server.use("/assignments", assignmentRoutes);
-// server.use("/evaluations", evaluationRoutes);
-// server.use("/submissions", submissionRoutes);
-// //router.use("/dashboard", dashboardRoutes);
-// server.use("/upload", uploadRoutes);
-
-// Admin routes (commented out until proper auth is implemented)
-// TODO: Implement proper authentication middleware
-// server.use("/api/admin", adminRouter);
+// API routes
+server.use("/api/v1", apiRoutes);
 
 // Error handling middleware (should be last)
+server.use(notFound);
 server.use(errorHandler);
 
 export default server;
+
 
 // ================================ //
 
