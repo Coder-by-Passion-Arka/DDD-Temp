@@ -28,7 +28,7 @@
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "express-fileupload": "^1.5.1",
-    "firebase-admin": "^11.11.0",
+    "firebase-admin": "^13.4.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.2",
     "morgan": "^1.10.0",
