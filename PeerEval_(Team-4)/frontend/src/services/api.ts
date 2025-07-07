@@ -248,9 +248,9 @@ class ApiService {
           baseURL: import.meta.env.VITE_API_URL || "http://localhost:8024/api",
         }
       );
-
-      // ApiResponse is already unwrapped above, adjust code accordingly
-      const { accessToken, refreshToken } = response.data;
+  
+      // Unwrap the nested `data` field
+      const { accessToken, refreshToken } = response.data.data; // Access the inner `data` field
       localStorage.setItem("accessToken", accessToken);
       if (refreshToken) {
         localStorage.setItem("refreshToken", refreshToken);

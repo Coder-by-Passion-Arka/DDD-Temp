@@ -356,7 +356,7 @@ import React, {
 import { apiService } from "../services/api";
 import { AxiosError } from "axios";
 import { auth, getCurrentUser as getFirebaseUser } from "../services/firebase";
-import { auth, getCurrentUser as getFirebaseUser } from "../services/firebase";
+// import { auth, getCurrentUser as getFirebaseUser } from "../services/firebase";
 
 // API Base URL - Updated to match your environment
 const API_BASE_URL = "http://localhost:8024/api/v1";
@@ -393,6 +393,14 @@ interface User {
   userJoiningDate?: string;
   userLastLogin?: string;
   isActive?: boolean;
+  authProvider?: string; // Added property
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  statusCode: number;
 }
 
 interface AuthState {
@@ -421,7 +429,7 @@ type AuthAction =
   | {
       type: "UPDATE_TOKENS";
       payload: { accessToken: string; refreshToken?: string };
-    };
+    }
   | { type: "COMPLETE_PROFILE" };
 
 // Registration data interface matching backend
@@ -531,22 +539,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuth = async () => {
       const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
-      
+  
       // Check Firebase auth state
       const firebaseUser = await getFirebaseUser();
-      
-      // Check Firebase auth state
-      const firebaseUser = await getFirebaseUser();
-
+  
       if (accessToken && refreshToken) {
         try {
-          const response = await apiService.get<{ data: User }>("/user/me");
-          const userData = response.data?.data || response.data;
-
+          const response = await apiService.get<ApiResponse<User>>("/user/me");
+          const userData = response.data; // Directly assign the response data
+  
           dispatch({
             type: "AUTH_SUCCESS",
             payload: {
-              user: userData as User,
+              user: userData,
               accessToken,
               refreshToken,
             },
@@ -564,37 +569,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else if (firebaseUser) {
         // User is signed in with Firebase but no tokens
         try {
-          // Get the ID token
           const idToken = await firebaseUser.getIdToken();
-          
-          // Send to backend to get our app tokens
-          const response = await apiService.post('/auth/firebase', { idToken });
-          const { user, accessToken, refreshToken, needsProfileCompletion } = response;
-          
+          const response = await apiService.post<ApiResponse<{
+            user: User;
+            accessToken: string;
+            refreshToken: string;
+            needsProfileCompletion?: boolean;
+          }>>("/auth/firebase", { idToken });
+  
+          const { user, accessToken, refreshToken, needsProfileCompletion } = response.data;
+  
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
-          
-          dispatch({
-            type: "AUTH_SUCCESS",
-            payload: { user, accessToken, refreshToken, needsProfileCompletion },
-          });
-        } catch (error) {
-          console.error("Firebase auth check failed:", error);
-          dispatch({ type: "AUTH_FAILURE" });
-        }
-      } else if (firebaseUser) {
-        // User is signed in with Firebase but no tokens
-        try {
-          // Get the ID token
-          const idToken = await firebaseUser.getIdToken();
-          
-          // Send to backend to get our app tokens
-          const response = await apiService.post('/auth/firebase', { idToken });
-          const { user, accessToken, refreshToken, needsProfileCompletion } = response;
-          
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
-          
+  
           dispatch({
             type: "AUTH_SUCCESS",
             payload: { user, accessToken, refreshToken, needsProfileCompletion },
@@ -607,10 +594,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch({ type: "AUTH_FAILURE" });
       }
     };
-
+  
     checkAuth();
   }, []);
-
   const refreshTokens = async () => {
     try {
       const response = await apiService.post<{
@@ -620,7 +606,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
       }>("/user/refresh-token");
 
-      const { accessToken, refreshToken } = response.data?.data || response.data;
+      const { accessToken, refreshToken } = response.data;
 
       localStorage.setItem("accessToken", accessToken);
       if (refreshToken) {
@@ -634,7 +620,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Get updated user data
       const userResponse = await apiService.get<{ data: User }>("/user/me");
-      const userData = userResponse.data?.data || userResponse.data;
+      const userData = userResponse.data 
       dispatch({ type: "UPDATE_USER", payload: userData as User });
     } catch (error) {
       dispatch({ type: "LOGOUT" });
@@ -666,7 +652,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("✅ Login response:", response.data);
 
       // Handle the response structure from your backend (ApiResponse format)
-      const responseData = response.data?.data || response.data;
+      const responseData = response.data;
 
       if (
         !responseData ||
@@ -728,7 +714,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else if (errorData?.message) {
           errorMessage = errorData.message;
         } else if (
-          error.code === "NETWORK_ERROR" ||
+          (typeof error === "object" && error !== null && "code" in error && error.code === "NETWORK_ERROR") ||
           error.code === "ERR_NETWORK"
         ) {
           errorMessage =
@@ -743,8 +729,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Network or other errors
       if (
-        error.code === "NETWORK_ERROR" ||
-        error.message.includes("Network Error")
+        (typeof error === "object" && error !== null && "code" in error && error.code === "NETWORK_ERROR") ||
+        typeof error === "object" && error !== null && "message" in error && typeof (error as any).message === "string" && (error as any).message.includes("Network Error")
       ) {
         throw new Error(
           "Cannot connect to server. Please check if the backend is running on port 8024."
@@ -752,7 +738,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       throw new Error(
-        error.message || "An unexpected error occurred during login"
+        (error instanceof Error ? error.message : "An unexpected error occurred during login")
       );
     }
   };
@@ -821,7 +807,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Update user in state
       if (response) {
-        dispatch({ type: "UPDATE_USER", payload: response });
+        const user: User = (response as { data: User }).data; // Ensure response contains a valid User object
+        dispatch({ type: "UPDATE_USER", payload: user });
         dispatch({ type: "COMPLETE_PROFILE" });
       }
     } catch (error) {
@@ -838,7 +825,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         message: string;
       }>("/user/update-profile", userData);
 
-      const updatedUser = response.data.data || response.data;
+      const updatedUser = response.data;
       dispatch({ type: "UPDATE_USER", payload: updatedUser as User });
       return updatedUser as User;
     } catch (error) {
@@ -859,7 +846,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         message: string;
       }>("/user/me");
 
-      const userData = response.data.data || response.data;
+      const userData = response.data;
       dispatch({ type: "UPDATE_USER", payload: userData as User });
       return userData as User;
     } catch (error) {

@@ -1018,9 +1018,9 @@ const AssignmentPage: React.FC = () => {
 
                 {assignment.userEvaluations &&
                   assignment.userEvaluations.some(
-                    (eval) =>
-                      eval.status === "assigned" ||
-                      eval.status === "in_progress"
+                    (evaluations) =>
+                      evaluations.status === "assigned" ||
+                      evaluations.status === "in_progress"
                   ) && (
                     <button
                       onClick={() => (window.location.href = "/evaluations")}

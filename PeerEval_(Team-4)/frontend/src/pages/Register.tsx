@@ -366,10 +366,17 @@ import { Link, Navigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { signInWithGoogle, signInWithGithub } from "../services/firebase";
-import { signInWithGoogle, signInWithGithub } from "../services/firebase";
+// import { signInWithGoogle, signInWithGithub } from "../services/firebase";
 import { useAuth, RegisterData } from "../contexts/AuthContext";
 import { useToast } from "../hooks/useToast";
 import { AxiosError } from "axios";
+import { apiService } from "../services/api";
+import { AxiosResponse } from "axios";
+
+interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+}
 
 enum UserRole {
   TEACHER = "teacher",
@@ -549,69 +556,37 @@ const Register: React.FC = () => {
 
   const handleSocialAuth = (provider: string) => {
     setIsLoading(true);
-    const authPromise = provider.toLowerCase() === "google" 
-      ? signInWithGoogle()
-      : signInWithGithub();
-
-    toast.promise(
-      authPromise.then(async (user) => {
-        if (user) {
-          // Get the ID token
-          const idToken = await user.getIdToken();
-          
-          // Send the token to your backend
-          const response = await apiService.post('/auth/firebase', { idToken });
-          
-          // Handle the response similar to regular login
-          const { accessToken, refreshToken } = response;
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
-          
-          // Redirect to dashboard or profile completion if needed
-          if (response.needsProfileCompletion) {
-            // Will be handled by AuthContext
-          }
-          
-          window.location.href = "/dashboard";
-        }
-      }),
-      {
+    const authPromise =
+      provider.toLowerCase() === "google" ? signInWithGoogle() : signInWithGithub();
+  
+    toast
+      .promise(authPromise, {
         loading: `Signing up with ${provider}...`,
         success: `${provider} authentication successful!`,
-        error: (err) => `${provider} authentication failed: ${err.message}`
-      }
-    ).finally(() => {
-      setIsLoading(false);
-    });
-      authPromise.then(async (user) => {
+        error: (err) => `${provider} authentication failed: ${err.message}`,
+      })
+      .then(async (user) => {
         if (user) {
-          // Get the ID token
           const idToken = await user.getIdToken();
-          
+  
           // Send the token to your backend
-          const response = await apiService.post('/auth/firebase', { idToken });
-          
-          // Handle the response similar to regular login
-          const { accessToken, refreshToken } = response;
+          const response: AxiosResponse<AuthResponse> = await apiService.post("/auth/firebase", { idToken });
+  
+          // Access the response data
+          const { accessToken, refreshToken } = response.data;
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
-          
-          // Redirect to dashboard or profile completion if needed
-          if (response.needsProfileCompletion) {
-            // Will be handled by AuthContext
-          }
-          
+  
+          // Redirect to dashboard
           window.location.href = "/dashboard";
         }
-      }),
-      {
-        loading: `Signing up with ${provider}...`,
-        success: `${provider} authentication successful!`,
-        error: (err) => `${provider} authentication failed: ${err.message}`
-      }
-    ).finally(() => {
-      setIsLoading(false);
-    });
+      })
+      .catch((err) => {
+        console.error("Social auth error:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -752,8 +727,6 @@ const Register: React.FC = () => {
                   onChange={handleInputChange}
                   disabled={isLoading}
                   className="text-indigo-600 focus:ring-indigo-500"
-  )
-}
                 />
                 <span className="text-gray-700 dark:text-gray-300">
                   Teacher

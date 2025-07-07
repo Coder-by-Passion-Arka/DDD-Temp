@@ -429,10 +429,10 @@ const EvaluationPage: React.FC = () => {
       // Update local state
       setEvaluationData((prev) => ({
         ...prev,
-        toEvaluate: prev.toEvaluate.map((eval) =>
-          eval._id === evaluation._id
+        toEvaluate: prev.toEvaluate.map((evaluations) =>
+          evaluations._id === evaluation._id
             ? {
-                ...eval,
+                ...evaluations,
                 status: "in_progress",
                 startedAt: new Date().toISOString(),
               }
@@ -790,8 +790,8 @@ const EvaluationPage: React.FC = () => {
                 {evaluationData.received.length > 0
                   ? Math.round(
                       evaluationData.received.reduce(
-                        (sum, eval) =>
-                          sum + (eval.totalScore / eval.maxTotalScore) * 100,
+                        (sum, evaluations) =>
+                          sum + (evaluations.totalScore / evaluations.maxTotalScore) * 100,
                         0
                       ) / evaluationData.received.length
                     )
