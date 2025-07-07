@@ -1,0 +1,38 @@
+# Backend .env file 
+PORT=8024
+DOMAIN_NAME=localhost
+NODE_ENV=development
+
+# Database Configurations (FIXED: Changed MONGO_URI to MONGODB_URI)
+MONGODB_URI=mongodb+srv://arkapravodas03:12345@cluster0.qmizvxr.mongodb.net/TEST_DB
+DB_NAME=TEST_DB
+
+# CORS - Update for security
+CORS_ORIGIN=http://localhost:5173
+
+# Backend Connection String
+VITE_API_URL=http://localhost:8024/api
+
+# Security settings
+JWT_SECRET=ddd_secret_key
+accessToken_SECRET=ddd_secret_key
+refreshToken_SECRET=ddd_secret_key
+accessToken_EXPIRY=1d
+refreshToken_EXPIRY=7d
+BCRYPT_ROUNDS=12
+MAX_LOGIN_ATTEMPTS=5
+
+# Role-based feature flags
+ENABLE_ROLE_HIERARCHY=true
+ENABLE_ADMIN_OVERRIDE=true
+ENABLE_AUDIT_LOGGING=true
+
+
+# File upload limits
+MAX_FILE_SIZE=10MB
+ALLOWED_FILE_TYPES=pdf,doc,docx,txt,jpg,png
+
+# Rate limiting
+RATE_LIMIT_STUDENT=100
+RATE_LIMIT_TEACHER=200
+RATE_LIMIT_ADMIN=500
