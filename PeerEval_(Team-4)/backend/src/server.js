@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import passport from "./config/passport.js";
 import logger from "./logger.js";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -76,6 +77,9 @@ server.use(express.static(
 
 // Cookie parser middleware
 server.use(cookieParser());
+
+// Initialize Passport
+server.use(passport.initialize());
 
 // Morgan logging middleware setup (for development)
 server.use(

@@ -397,6 +397,7 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
+  needsProfileCompletion: boolean;
   isLoading: boolean;
   isAuthenticated: boolean;
 }
@@ -404,9 +405,14 @@ interface AuthState {
 type AuthAction =
   | { type: "AUTH_START" }
   | {
-      type: "AUTH_SUCCESS";
-      payload: { user: User; accessToken: string; refreshToken: string };
-    }
+    type: "AUTH_SUCCESS";
+    payload: { 
+      user: User; 
+      accessToken: string; 
+      refreshToken: string; 
+      needsProfileCompletion?: boolean 
+    };
+  }
   | { type: "AUTH_FAILURE" }
   | { type: "LOGOUT" }
   | { type: "UPDATE_USER"; payload: User }
@@ -414,6 +420,7 @@ type AuthAction =
       type: "UPDATE_TOKENS";
       payload: { accessToken: string; refreshToken?: string };
     };
+  | { type: "COMPLETE_PROFILE" };
 
 // Registration data interface matching backend
 export interface RegisterData {
@@ -436,6 +443,7 @@ const initialState: AuthState = {
   user: null,
   accessToken: null,
   refreshToken: null,
+  needsProfileCompletion: false,
   isLoading: true,
   isAuthenticated: false,
 };
@@ -452,6 +460,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         user: action.payload.user,
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
+        needsProfileCompletion: action.payload.needsProfileCompletion || false,
         isLoading: false,
         isAuthenticated: true,
       };
@@ -462,6 +471,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         user: null,
         accessToken: null,
         refreshToken: null,
+        needsProfileCompletion: false,
         isLoading: false,
         isAuthenticated: false,
       };
@@ -480,6 +490,12 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken || state.refreshToken,
       };
+      
+    case "COMPLETE_PROFILE":
+      return {
+        ...state,
+        needsProfileCompletion: false
+      };
 
     default:
       return state;
@@ -492,6 +508,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
+  completeSocialProfile: (userData: any) => Promise<void>;
   updateProfile: (userData: Partial<User>) => Promise<User>;
   refreshAccessToken: () => Promise<void>;
   getCurrentUser: () => Promise<User>;
@@ -614,6 +631,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { user, accessToken, refreshToken } = responseData;
 
       // Store tokens
+      const needsProfileCompletion = user.authProvider !== "local" && 
+        (!user.userPhoneNumber || !user.userLocation?.homeAddress || !user.userLocation?.currentAddress);
+      
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
@@ -622,7 +642,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       dispatch({
         type: "AUTH_SUCCESS",
-        payload: { user, accessToken, refreshToken },
+        payload: { user, accessToken, refreshToken, needsProfileCompletion },
       });
     } catch (error) {
       console.error("❌ Login error:", error);
@@ -745,6 +765,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const completeSocialProfile = async (userData: any): Promise<void> => {
+    try {
+      const response = await apiService.patch('/auth/social-profile/complete', userData);
+      
+      // Update user in state
+      if (response) {
+        dispatch({ type: "UPDATE_USER", payload: response });
+        dispatch({ type: "COMPLETE_PROFILE" });
+      }
+    } catch (error) {
+      console.error("Error completing social profile:", error);
+      throw error;
+    }
+  };
+
   const updateProfile = async (userData: Partial<User>): Promise<User> => {
     try {
       const response = await apiService.patch<{
@@ -795,6 +830,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     state,
     login,
     register,
+    completeSocialProfile,
     logout,
     updateProfile,
     refreshAccessToken,

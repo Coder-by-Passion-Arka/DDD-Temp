@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import passport from "../config/passport.js";
 import {
   refreshAccessToken,
   registerUser,
@@ -10,6 +11,12 @@ import {
   getCurrentUser,
   updateAccountDetails,
 } from "../controllers/auth.controller.js";
+
+// Social login controllers
+import {
+  googleCallback,
+  githubCallback
+} from "../controllers/socialAuth.controller.js";
 
 const router = Router();
 
@@ -72,6 +79,20 @@ router.route("/login").post(loginUser);
 
 // 3. Refresh access token
 router.route("/refresh-token").post(refreshAccessToken);
+
+// Google Authentication Routes
+router.route("/google").get(passport.authenticate("google", { scope: ["profile", "email"] }));
+router.route("/google/callback").get(
+  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
+  googleCallback
+);
+
+// GitHub Authentication Routes
+router.route("/github").get(passport.authenticate("github", { scope: ["user:email"] }));
+router.route("/github/callback").get(
+  passport.authenticate("github", { session: false, failureRedirect: "/login" }),
+  githubCallback
+);
 
 // ============================= //
 

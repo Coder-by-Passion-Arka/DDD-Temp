@@ -434,10 +434,12 @@ const Login: React.FC = () => {
   };
 
   const handleSocialAuth = (provider: string) => {
-    toast.info(`${provider} authentication will be available soon!`, {
-      title: "Coming Soon",
-      duration: 3000,
-    });
+    // Redirect to the appropriate auth endpoint
+    const authEndpoint = provider.toLowerCase() === "google" 
+      ? "http://localhost:8024/api/v1/auth/google"
+      : "http://localhost:8024/api/v1/auth/github";
+    
+    window.location.href = authEndpoint;
   };
 
   const handleForgotPassword = () => {
@@ -541,7 +543,7 @@ const Login: React.FC = () => {
           <button
             type="button"
             disabled={isLoading}
-            onClick={() => handleSocialAuth("Google")}
+            onClick={() => handleSocialAuth("google")}
             className="flex items-center justify-center gap-2 w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 py-3 rounded-lg shadow-sm hover:shadow-md transition disabled:opacity-50"
           >
             <FcGoogle size={20} />
@@ -552,7 +554,7 @@ const Login: React.FC = () => {
           <button
             type="button"
             disabled={isLoading}
-            onClick={() => handleSocialAuth("GitHub")}
+            onClick={() => handleSocialAuth("github")}
             className="flex items-center justify-center gap-2 w-full bg-gray-900 text-white py-3 rounded-lg shadow-sm hover:bg-gray-800 transition disabled:opacity-50"
           >
             <FaGithub size={20} />

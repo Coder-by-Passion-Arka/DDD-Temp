@@ -10,6 +10,7 @@ import {
 // ================================ Component Imports ============================ //
 import ProtectedRoute from "./components/ProtectedRoute";
 import Breadcrumb from "./components/Breadcrumb";
+import SocialProfileCompletion from "./components/SocialProfileCompletion";
 
 // ================================ Pages Imports ================================ //
 import DashboardHome from "./pages/Dashboard";
@@ -29,6 +30,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext"; // ← Only import ToastProvider from context
 import ToastContainer from "./components/ToastContainer"; // ← Import ToastContainer from components
+import { useAuth } from "./contexts/AuthContext";
 
 // Admin Components (create these as simple placeholders)
 const AdminUserManagement: React.FC = () => (
@@ -62,62 +64,98 @@ function App() {
     <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
-          <Router>
-            <div className="App">
-              {/* Toast container - render outside Routes */}
-              <ToastContainer />
-
-              <Routes>
-                {/* Public routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-
-                {/* Protected routes with layout */}
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <Breadcrumb />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Navigate to="/dashboard" replace />} />
-                  <Route path="dashboard" element={<DashboardHome />} />
-                  <Route path="courses" element={<Courses />} />
-                  <Route path="find-student" element={<GoToStudentProfile />} />
-                  <Route path="assignments" element={<AssignmentsPage />} />
-                  <Route path="evaluations" element={<EvaluationsPage />} />
-                  <Route path="analytics" element={<AnalyticsPage />} />
-                  <Route path="achievements" element={<AchievementsPage />} />
-                  <Route path="profile" element={<ProfilePage />} />
-                  <Route path="profile/:userId" element={<ProfilePage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-
-                  {/* Admin-only routes */}
-                  <Route
-                    path="admin/users"
-                    element={
-                      <ProtectedRoute requiredRole="admin">
-                        <AdminUserManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/system"
-                    element={
-                      <ProtectedRoute requiredRole="admin">
-                        <AdminSystemSettings />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Route>
-              </Routes>
-            </div>
-          </Router>
+          <AppContent />
         </AuthProvider>
       </ToastProvider>
     </ThemeProvider>
   );
 }
+
+// Wrapper component to handle social profile completion
+const AppContent: React.FC = () => {
+  const { state, completeSocialProfile } = useAuth();
+  const [showProfileCompletion, setShowProfileCompletion] = useState(false);
+  
+  useEffect(() => {
+    if (state.isAuthenticated && state.needsProfileCompletion) {
+      setShowProfileCompletion(true);
+    }
+  }, [state.isAuthenticated, state.needsProfileCompletion]);
+  
+  const handleProfileComplete = () => {
+    setShowProfileCompletion(false);
+  };
+  
+  const handleProfileCancel = () => {
+    // Log the user out if they cancel profile completion
+    setShowProfileCompletion(false);
+    window.location.href = "/login";
+  };
+  
+  return (
+    <>
+      <Router>
+        <div className="App">
+          {/* Toast container - render outside Routes */}
+          <ToastContainer />
+          
+          {/* Social profile completion modal */}
+          {showProfileCompletion && (
+            <SocialProfileCompletion 
+              onComplete={handleProfileComplete} 
+              onCancel={handleProfileCancel} 
+            />
+          )}
+
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Protected routes with layout */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Breadcrumb />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardHome />} />
+              <Route path="courses" element={<Courses />} />
+              <Route path="find-student" element={<GoToStudentProfile />} />
+              <Route path="assignments" element={<AssignmentsPage />} />
+              <Route path="evaluations" element={<EvaluationsPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="achievements" element={<AchievementsPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="profile/:userId" element={<ProfilePage />} />
+              <Route path="settings" element={<SettingsPage />} />
+
+              {/* Admin-only routes */}
+              <Route
+                path="admin/users"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUserManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/system"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminSystemSettings />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Routes>
+        </div>
+      </Router>
+    </>
+  );
+};
 
 export default App;

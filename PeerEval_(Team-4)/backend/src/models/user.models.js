@@ -66,6 +66,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    authProvider: {
+      type: String,
+      enum: ["local", "google", "github"],
+      default: "local"
+    },
     userAcademicInformation: {
       universityName: {
         type: String,
@@ -151,7 +156,7 @@ userSchema.index({ userName: 1 });
 // Hash password before saving
 userSchema.pre("save", async function (next) {
   // Only hash the password if it has been modified (or is new)
-  if (!this.isModified("userPassword")) return next();
+  if (!this.isModified("userPassword") || this.authProvider !== "local") return next();
 
   try {
     // Hash password with cost of 12
@@ -164,6 +169,11 @@ userSchema.pre("save", async function (next) {
 
 // Compare password method
 userSchema.methods.isPasswordCorrect = async function (password) {
+  // For social login users, always return false for direct password comparison
+  if (this.authProvider !== "local") {
+    return false;
+  }
+  
   try {
     return await bcrypt.compare(password, this.userPassword);
   } catch (error) {
