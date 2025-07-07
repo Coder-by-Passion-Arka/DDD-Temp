@@ -1,40 +1,5 @@
 import mongoose from "mongoose";
 
-const achievementsSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 50,
-    },
-    description: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 500,
-    },
-    date: {
-      type: Date,
-      required: true,
-    },
-    achievementHolder: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-export default mongoose.model("Achievement", achievementsSchema);
-
-// =============================== // 
-
-import mongoose from "mongoose";
-
 const achievementSchema = new mongoose.Schema(
   {
     userId: {
@@ -88,7 +53,6 @@ const achievementSchema = new mongoose.Schema(
       default: Date.now,
     },
     criteria: {
-      // Conditions that must be met to earn this achievement
       assignmentCount: Number,
       minScore: Number,
       streakDays: Number,
@@ -96,7 +60,6 @@ const achievementSchema = new mongoose.Schema(
       skillCount: Number,
     },
     context: {
-      // Additional context about how this achievement was earned
       assignmentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Assignment",
@@ -114,7 +77,7 @@ const achievementSchema = new mongoose.Schema(
   }
 );
 
-// Index for better query performance
+// Indexes for performance
 achievementSchema.index({ userId: 1, earnedAt: -1 });
 achievementSchema.index({ type: 1 });
 achievementSchema.index({ category: 1 });

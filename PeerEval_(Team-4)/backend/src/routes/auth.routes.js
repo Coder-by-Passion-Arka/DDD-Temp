@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import passport from "../config/passport.js";
 import { handleFirebaseAuth } from "../controllers/firebaseAuth.controller.js";
 import {
   refreshAccessToken,
@@ -87,19 +86,6 @@ router.route("/firebase").post(handleFirebaseAuth);
 // Firebase Authentication
 router.route("/firebase").post(handleFirebaseAuth);
 
-// Google Authentication Routes
-router.route("/google").get(passport.authenticate("google", { scope: ["profile", "email"] }));
-router.route("/google/callback").get(
-  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
-  googleCallback
-);
-
-// GitHub Authentication Routes
-router.route("/github").get(passport.authenticate("github", { scope: ["user:email"] }));
-router.route("/github/callback").get(
-  passport.authenticate("github", { session: false, failureRedirect: "/login" }),
-  githubCallback
-);
 
 // ============================= //
 
