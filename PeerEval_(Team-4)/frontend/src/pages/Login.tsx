@@ -290,10 +290,10 @@ import { Link, Navigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { signInWithGoogle, signInWithGithub } from "../services/firebase";
-import { signInWithGoogle, signInWithGithub } from "../services/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/useToast";
 import { AxiosError } from "axios";
+import { apiService } from "../services/api";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -356,16 +356,15 @@ const Login: React.FC = () => {
     try {
       await toast.promise(login(formData.userEmail, formData.userPassword), {
         loading: "Signing you in...",
-        success: (data) => {
-          // Get user role and customize welcome message
-          const user = state.user || data?.user;
+        success: () => {
+          // Explicitly cast `data` to the expected type
+          const user = state.user;
           const roleMessages = {
-            student:
-              "Welcome back! Ready to continue your learning journey? 📚",
+            student: "Welcome back! Ready to continue your learning journey? 📚",
             teacher: "Welcome back! Your students are waiting for you. 👨‍🏫",
             admin: "Welcome back, Admin! The platform is at your command. 🔑",
           };
-
+      
           return (
             roleMessages[user?.userRole as keyof typeof roleMessages] ||
             "Welcome back! Login successful. 🎉"
@@ -374,7 +373,7 @@ const Login: React.FC = () => {
         error: (err) => {
           if (err instanceof AxiosError) {
             const errorData = err.response?.data;
-
+      
             // Handle specific HTTP status codes
             switch (err.response?.status) {
               case 401:
@@ -391,13 +390,12 @@ const Login: React.FC = () => {
                 }
             }
           }
-
+      
           return err instanceof Error
             ? err.message
             : "Login failed. Please try again.";
         },
       });
-
       // Success - additional actions
       if (rememberMe) {
         // You could store user preference for "remember me"
@@ -451,12 +449,12 @@ const Login: React.FC = () => {
           const response = await apiService.post('/auth/firebase', { idToken });
           
           // Handle the response similar to regular login
-          const { accessToken, refreshToken } = response;
+          const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
           
           // Redirect to dashboard or profile completion if needed
-          if (response.needsProfileCompletion) {
+          if ((response as { needsProfileCompletion?: boolean }).needsProfileCompletion) {
             // Will be handled by AuthContext
           }
           
