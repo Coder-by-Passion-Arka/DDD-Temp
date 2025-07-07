@@ -8,29 +8,29 @@ import {
 } from "react-router-dom";
 
 // ================================ Component Imports ============================ //
-import ProtectedRoute from "./components/ProtectedRoute";
-import Breadcrumb from "./components/Breadcrumb";
-import SocialProfileCompletion from "./components/SocialProfileCompletion";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import Breadcrumb from "./components/Breadcrumb.tsx";
+import SocialProfileCompletion from "./components/SocialProfileCompletion.tsx";
 
 // ================================ Pages Imports ================================ //
-import DashboardHome from "./pages/Dashboard";
-import AssignmentsPage from "./pages/Assignments";
-import EvaluationsPage from "./pages/Evaluations";
-import AnalyticsPage from "./pages/Analytics";
-import AchievementsPage from "./pages/Achievements";
-import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import GoToStudentProfile from "./pages/GoToStudentProfile";
+import DashboardHome from "./pages/Dashboard.tsx";
+import AssignmentsPage from "./pages/Assignments.tsx";
+import EvaluationsPage from "./pages/Evaluations.tsx";
+import AnalyticsPage from "./pages/Analytics.tsx";
+import AchievementsPage from "./pages/Achievements.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
+import SettingsPage from "./pages/SettingsPage.tsx";
+import Login from "./pages/Login.tsx";
+import Register from "./pages/Register.tsx";
+import GoToStudentProfile from "./pages/GoToStudentProfile.tsx";
 import Courses from "./pages/Courses.tsx";
 
 // ================================ Context Imports =============================== //
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ToastProvider } from "./contexts/ToastContext"; // ← Only import ToastProvider from context
-import ToastContainer from "./components/ToastContainer"; // ← Import ToastContainer from components
-import { useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext.tsx";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
+import { ToastProvider } from "./contexts/ToastContext.tsx"; // ← Only import ToastProvider from context
+import ToastContainer from "./components/ToastContainer.tsx"; // ← Import ToastContainer from components
+import { useAuth } from "./contexts/AuthContext.tsx";
 
 // Admin Components (create these as simple placeholders)
 const AdminUserManagement: React.FC = () => (

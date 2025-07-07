@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Gamepad2, Trophy, Star, Clock, Target } from "lucide-react";
 
-import HangmanGame from "./games/HangmanGame";
+import HangmanGame from "./games/HangmanGame.tsx";
 import MemoryMatch from "./games/MemoryMatch.tsx";
 import Minesweeper from "./games/Minesweeper.tsx";
 import NumberGuessingGame from "./games/NumberGuessingGame.tsx";
