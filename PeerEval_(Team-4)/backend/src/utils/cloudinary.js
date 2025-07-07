@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-/**
+/** 
  * Uploads a file to Cloudinary
  * @param {string} localFilePath - Path to the local file
  * @param {Object} options - Upload options
