@@ -80,5 +80,3 @@ export const handleFirebaseAuth = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid or expired Firebase token");
   }
 });
-
-export default { handleFirebaseAuth };

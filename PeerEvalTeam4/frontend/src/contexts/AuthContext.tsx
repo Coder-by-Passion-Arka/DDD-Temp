@@ -356,6 +356,7 @@ import React, {
 import { apiService } from "../services/api";
 import { AxiosError } from "axios";
 import { auth, getCurrentUser as getFirebaseUser } from "../services/firebase";
+import { auth, getCurrentUser as getFirebaseUser } from "../services/firebase";
 
 // API Base URL - Updated to match your environment
 const API_BASE_URL = "http://localhost:8024/api/v1";
@@ -533,6 +534,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Check Firebase auth state
       const firebaseUser = await getFirebaseUser();
+      
+      // Check Firebase auth state
+      const firebaseUser = await getFirebaseUser();
 
       if (accessToken && refreshToken) {
         try {
@@ -556,6 +560,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.error("Token refresh failed:", refreshError);
             dispatch({ type: "AUTH_FAILURE" });
           }
+        }
+      } else if (firebaseUser) {
+        // User is signed in with Firebase but no tokens
+        try {
+          // Get the ID token
+          const idToken = await firebaseUser.getIdToken();
+          
+          // Send to backend to get our app tokens
+          const response = await apiService.post('/auth/firebase', { idToken });
+          const { user, accessToken, refreshToken, needsProfileCompletion } = response;
+          
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          
+          dispatch({
+            type: "AUTH_SUCCESS",
+            payload: { user, accessToken, refreshToken, needsProfileCompletion },
+          });
+        } catch (error) {
+          console.error("Firebase auth check failed:", error);
+          dispatch({ type: "AUTH_FAILURE" });
         }
       } else if (firebaseUser) {
         // User is signed in with Firebase but no tokens
