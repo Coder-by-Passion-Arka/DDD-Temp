@@ -103,6 +103,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+// import { BookOpenCheck } from "lucide-react";
 import {
   BookOpenCheck,
   Loader2,
@@ -118,9 +119,9 @@ import {
   Users,
   Award,
   TrendingUp,
-} from "lucide-react";
+} from "lucide-react";  
 import { useAuth } from "../contexts/AuthContext";
-import { apiService } from "../services/api";
+// import { apiService } from "../services/api";
 
 interface EvaluationScore {
   criteriaName: string;
@@ -428,17 +429,17 @@ const EvaluationPage: React.FC = () => {
 
       // Update local state
       setEvaluationData((prev) => ({
-        ...prev,
-        toEvaluate: prev.toEvaluate.map((evaluations) =>
-          evaluations._id === evaluation._id
-            ? {
-                ...evaluations,
-                status: "in_progress",
-                startedAt: new Date().toISOString(),
-              }
-            : eval
-        ),
-      }));
+              ...prev,
+              toEvaluate: prev.toEvaluate.map((evaluationItem) =>
+                evaluationItem._id === evaluation._id
+                  ? {
+                      ...evaluationItem,
+                      status: "in_progress",
+                      startedAt: new Date().toISOString(),
+                    }
+                  : evaluationItem
+              ),
+            }));
     } catch (error) {
       console.error("Error starting evaluation:", error);
       setError("Failed to start evaluation");
@@ -466,7 +467,7 @@ const EvaluationPage: React.FC = () => {
         setEvaluationData((prev) => ({
           ...prev,
           toEvaluate: prev.toEvaluate.filter(
-            (eval) => eval._id !== selectedEvaluation._id
+            (evaluationItem) => evaluationItem._id !== selectedEvaluation._id
           ),
           completed: [...prev.completed, updatedEvaluation],
         }));
