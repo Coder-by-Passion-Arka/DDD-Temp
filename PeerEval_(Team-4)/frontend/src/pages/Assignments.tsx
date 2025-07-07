@@ -265,31 +265,32 @@
 // ================================================== //
  
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
-  ArrowLeft,
+  // ArrowLeft,
   User,
   Layers,
   Loader2,
   Plus,
   BookOpen,
   Users,
-  Settings,
+  // Settings,
   Clock,
   CheckCircle,
   AlertCircle,
   FileText,
   Target,
   Eye,
-  Upload,
+  // Upload,
   Calendar,
   BarChart3,
-  Award,
+  // Award,
   Shuffle,
 } from "lucide-react";
 import SkillSuggestionModal from "../components/SkillSuggestionModal";
 import { useSkillSuggestion } from "../hooks/useSkillSuggestion";
 import { useAuth } from "../contexts/AuthContext";
-import { apiService } from "../services/api";
+// import { apiService } from "../services/api";
 
 interface Assignment {
   _id: string;
