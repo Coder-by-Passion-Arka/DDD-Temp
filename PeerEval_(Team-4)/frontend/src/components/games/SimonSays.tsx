@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, RefreshCw, Clock, Target, MousePointerClick } from 'lucide-react';
+import {
+  ArrowLeft,
+  RefreshCw,
+  Clock,
+  Target,
+  MousePointerClick,
+} from "lucide-react";
 
 const colors = ["green", "red", "yellow", "blue"];
 const colorMap: Record<string, string> = {
@@ -39,9 +45,9 @@ const SimonSays: React.FC<SimonSaysProps> = ({ onBack, onComplete }) => {
     setIsPlayerTurn(false);
     for (const color of seq) {
       setActiveColor(color);
-      await new Promise((res) => setTimeout(res, 500));
+      await new Promise((response) => setTimeout(response, 500));
       setActiveColor(null);
-      await new Promise((res) => setTimeout(res, 200));
+      await new Promise((response) => setTimeout(response, 200));
     }
     setIsPlayerTurn(true);
     setMessage("Your turn!");
@@ -126,7 +132,9 @@ const SimonSays: React.FC<SimonSaysProps> = ({ onBack, onComplete }) => {
 
         {/* Game Card */}
         <div className="bg-gradient-to-br from-white to-slate-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 sm:p-6 shadow-xl dark:shadow-gray-900/40 border border-gray-200 dark:border-gray-700 mb-6 text-center">
-          <h1 className="text-4xl font-extrabold text-purple-700 dark:text-purple-300 mb-4">🧠 Simon Says</h1>
+          <h1 className="text-4xl font-extrabold text-purple-700 dark:text-purple-300 mb-4">
+            🧠 Simon Says
+          </h1>
           <p className="text-xl mb-1">{message}</p>
           {gameStarted && (
             <div className="grid grid-cols-3 gap-4 text-sm text-center text-gray-900 dark:text-white mb-6">
@@ -167,8 +175,8 @@ const SimonSays: React.FC<SimonSaysProps> = ({ onBack, onComplete }) => {
             🟩 How to Play
           </h4>
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            Repeat the color sequence shown. Each round adds a new color. How long
-            can you remember the pattern?
+            Repeat the color sequence shown. Each round adds a new color. How
+            long can you remember the pattern?
           </p>
         </div>
       </div>

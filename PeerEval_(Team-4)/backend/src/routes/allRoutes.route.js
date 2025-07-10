@@ -1,11 +1,15 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes.js";
-import courseRoutes from "./course.routes.js";
-import assignmentRoutes from "./assignment.routes.js";
-import evaluationRoutes from "./evaluation.routes.js";
-import submissionRoutes from "./submission.routes.js";
+import authRoutes from "./auth.route.js";
+import courseRoutes from "./course.route.js";
+import assignmentRoutes from "./assignment.route.js";
+import evaluationRoutes from "./evaluation.route.js";
+import submissionRoutes from "./submission.route.js";
+import achievementRoutes from "./achievement.route.js";
+import dailyActivityRoutes from "./dailyActivity.route.js";
+import leaderboardRoutes from "./leaderboard.route.js";
+import preferencesRoutes from "./preferences.route.js";
 // import dashboardRoutes from "./dashboard.routes.js";
-import uploadRoutes from "./upload.routes.js";
+import uploadRoutes from "./upload.route.js";
 import {
   corsMiddleware,
   securityHeaders,
@@ -22,8 +26,8 @@ router.use(requestLogger);
 router.use(sanitizeInput);
 
 // Health check route
-router.get("/health", (req, res) => {
-  res.status(200).json({
+router.get("/health", (request, response) => {
+  response.status(200).json({
     success: true,
     message: "Server is running properly",
     timestamp: new Date().toISOString(),
@@ -37,12 +41,16 @@ router.use("/courses", courseRoutes);
 router.use("/assignments", assignmentRoutes);
 router.use("/evaluations", evaluationRoutes);
 router.use("/submissions", submissionRoutes);
+router.use("/achievements", achievementRoutes);
+router.use("/dailyActivities", dailyActivityRoutes);
+router.use("/leaderboard", leaderboardRoutes);
+router.use("/preferences", preferencesRoutes);
 //router.use("/dashboard", dashboardRoutes);
 router.use("/upload", uploadRoutes);
 
 // API info route
-router.get("/", (req, res) => {
-  res.status(200).json({
+router.get("/", (request, response) => {
+  response.status(200).json({
     success: true,
     message: "Peer Evaluation Platform API",
     version: "1.0.0",
@@ -53,6 +61,8 @@ router.get("/", (req, res) => {
       assignments: "/api/v1/assignments",
       evaluations: "/api/v1/evaluations",
       submissions: "/api/v1/submissions",
+      achievements: "/api/v1/achievements",
+      preferences: "/api/v1//preferences",
       //dashboard: "/api/v1/dashboard",
       upload: "/api/v1/upload",
     },

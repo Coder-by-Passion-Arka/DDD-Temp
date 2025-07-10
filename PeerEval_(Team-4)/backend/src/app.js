@@ -3,7 +3,7 @@ import connectDB from "./db/index.js";
 import dotenv from "dotenv";
 
 dotenv.config({
-  path: "src/.env", // If firing npm start from backend/
+  path: [".env.llocal", ".env"], // If firing npm start from backend/
 });
 
 // Connect to MongoDB and start server //
@@ -17,7 +17,7 @@ connectDB()
   }) // Execute immediately asynchronously //
   .catch((error) => {
     console.error(`Failed to connect to MongoDB: ${error.message}`);
-    process.exit(1);
+    // process.exit(1);
   })
   .finally(() => {
     console.log("Error at `app.js` file, Diagnose the error and fix it");

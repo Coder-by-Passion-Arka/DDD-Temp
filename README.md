@@ -16,6 +16,15 @@ Key enhancements in this release include:
 - Advanced analytical features designed to support and empower students.
 - A comprehensive suite of tools that set this platform apart from conventional solutions.
 
+## Note 
+
+You need to have Node Version **22.14.0 or higher** to run this project.
+
+```shell
+nvm install 22.14.0
+nvm use 22.14.0
+```
+
 ## Tech Stack
 
 This project is built using the **MERN stack**:
@@ -36,7 +45,10 @@ This project is built using the **MERN stack**:
 
 DDD-Team-4/
 ├── backend/
+│ ├── public/
 │ ├── src/
+│ │ ├── config/
+│ │ │ └── passport.js
 │ │ ├── models/
 │ │ │ ├── achievement.models.js
 │ │ │ ├── assignment.models.js
@@ -46,58 +58,76 @@ DDD-Team-4/
 │ │ │ ├── goals.models.js
 │ │ │ ├── leaderboard.models.js
 │ │ │ ├── preferences.models.js
-│ │ │ ├── submission.models.js
+│ │ │ ├── submissions.models.js
 │ │ │ └── user.models.js
 │ │ ├── routes/
-│ │ │ ├── goals.routes.js
+│ │ │ ├── achievement.routes.js
 │ │ │ ├── allRouters.routes.js
 │ │ │ ├── assignments.routes.js
+│ │ │ ├── auth.routes.js
 │ │ │ ├── course.routes.js
+│ │ │ ├── dailyActivity.routes.js
 │ │ │ ├── evaluation.routes.js
 │ │ │ ├── goals.routes.js
+│ │ │ ├── healthCheck.routes.js 
+│ │ │ ├── leaderboard.routes.js
+│ │ │ ├── preferences.routes.js
 │ │ │ ├── submission.routes.js
 │ │ │ ├── upload.routes.js
-│ │ │ ├── leaderboard.routes.js
-│ │ │ ├── user.routes.js
-│ │ │ └── healthCheck.routes.js
+│ │ │ └── user.routes.js
 │ │ ├── db/
 │ │ │ └── index.js
 │ │ ├── controllers/
 │ │ │ ├── leaderboard.controller.js
-│ │ │ ├── assignment.models.js
-│ │ │ ├── achievement.models.js
-│ │ │ ├── course.models.js
-│ │ │ ├── evaluation.models.js
+│ │ │ ├── assignment.controller.js
+│ │ │ ├── achievement.controller.js
+│ │ │ ├── course.controller.js
+│ │ │ ├── dailyActivity.controller.js
+│ │ │ ├── evaluation.controller.js
+│ │ │ ├── firebaseAuth.controller.js
 │ │ │ ├── goals.controller.js
 │ │ │ ├── healthCheck.controller.js
 │ │ │ ├── leaderboard.controller.js
+│ │ │ ├── preferences.controller.js
 │ │ │ ├── submission.controller.js
-│ │ │ └── user.controller.js
+│ │ │ ├── upload.controller.js
+│ │ │ ├── socialAuth.controller.js
+│ │ │ └── auth.controller.js
 │ │ ├── utils/
+│ │ │ ├── apiError.js
+│ │ │ ├── apiResponse.js 
 │ │ │ ├── arrayUtils.js
+│ │ │ ├── claudinary.js
 │ │ │ ├── dateUtils.js
 │ │ │ ├── fileUtils.js
 │ │ │ ├── objectUtils.js
-│ │ │ ├── string.js
-│ │ │ ├── apiError.js
-│ │ │ └── apiResponse.js
+│ │ │ └── stringUtils.js
 │ │ ├── services/
-│ │ │ └── evaluationAssigner.js
+│ │ │ ├── achievement.service.js
+│ │ │ ├── firebase.service.js
+│ │ │ └── evaluationAssigner.service.js
 │ │ ├── middlewares/
 │ │ │ ├── auth.middleware.js
-│ │ │ ├── cloudinary.models.js
+│ │ │ ├── achievement.middleware.js
+│ │ │ ├── cloudinary.middleware.js
 │ │ │ ├── errorHandling.middleware.js
-│ │ │ ├── roleAuth.middleware.js
+│ │ │ ├── preferences.middleware.js
+<!-- │ │ │ ├── roleAuth.middleware.js -->
 │ │ │ └── multer.middleware.js
 │ │ ├── server.js
 │ │ ├── app.js
 │ │ ├── logger.js
 │ │ └── .env
-│ ├── error.log
+│ ├── logs
+│ │ ├── combined.log
+│ │ ├── error.log
+│ │ ├── exceptions.log
+│ │ └── rejections.log
 │ ├── package.json
 │ └── package-lock.json
 │
 ├── frontend/
+│ ├── public
 │ ├── src/
 │ │ ├── badges/
 │ │ │ ├── badgesData.ts
@@ -111,10 +141,13 @@ DDD-Team-4/
 │ │ │ ├── GameModal.tsx
 │ │ │ ├── LeaderboardModal.tsx
 │ │ │ ├── LeaderboardPanel.tsx
+│ │ │ ├── Preferences.tsx
 │ │ │ ├── ProgressChart.tsx
+│ │ │ ├── ProtectedRoute.tsx
 │ │ │ ├── RecentAssignments.tsx
 │ │ │ ├── Sidebar.tsx
 │ │ │ ├── SkillSuggestionModal.tsx
+│ │ │ ├── SocialProfileCompletion.tsx
 │ │ │ ├── StatsCard.tsx
 │ │ │ ├── StreakCounter.tsx
 │ │ │ ├── Toast.tsx
@@ -125,6 +158,7 @@ DDD-Team-4/
 │ │ │ ├── Analytics.tsx
 │ │ │ ├── Assignments.tsx
 │ │ │ ├── Courses.tsx
+│ │ │ ├── DailyActivities.tsx
 │ │ │ ├── Dashboard.tsx
 │ │ │ ├── Evaluation.tsx
 │ │ │ ├── GoToStudentProfile.tsx
@@ -137,9 +171,12 @@ DDD-Team-4/
 │ │ │ ├── ToastContext.tsx
 │ │ │ └── AuthContext.tsx
 │ │ ├── hooks/
-│ │ │ ├── useToast.tsx
+│ │ │ ├── useToast.ts
 │ │ │ └── useSkillSuggestion.ts
 │ │ ├── services/
+│ │ │ ├── achievements.api.tsx
+│ │ │ ├── cloudinary.ts
+│ │ │ ├── firebase.ts
 │ │ │ └── api.ts
 │ │ ├── utils/
 │ │ │ └── skillDetection.ts

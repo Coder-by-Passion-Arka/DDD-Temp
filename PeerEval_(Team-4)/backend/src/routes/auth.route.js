@@ -22,16 +22,16 @@ const router = Router();
 
 // Middleware to check if user has required role(s)
 const requireRole = (...allowedRoles) => {
-  return (req, res, next) => {
+  return (req, response, next) => {
     if (!req.user) {
-      return res.status(401).json({
+      return response.status(401).json({
         success: false,
         message: "Authentication required",
       });
     }
 
     if (!allowedRoles.includes(req.user.userRole)) {
-      return res.status(403).json({
+      return response.status(403).json({
         success: false,
         message: `Access denied. Required role: ${allowedRoles.join(" or ")}`,
       });
@@ -42,7 +42,7 @@ const requireRole = (...allowedRoles) => {
 };
 
 // Middleware to check if user can access specific profile
-const canAccessProfile = (req, res, next) => {
+const canAccessProfile = (req, response, next) => {
   const { userId } = req.params;
   const requestingUser = req.user;
 
@@ -57,7 +57,7 @@ const canAccessProfile = (req, res, next) => {
   }
 
   // Students can only access their own profile
-  return res.status(403).json({
+  return response.status(403).json({
     success: false,
     message: "Students can only access their own profile",
   });
@@ -124,8 +124,8 @@ router.route("/admin/users").get(
   verifyJWT,
   requireRole("admin"),
   // TODO: Add getAllUsers controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "Admin user management endpoint not implemented yet",
     });
@@ -136,8 +136,8 @@ router.route("/admin/users/:userId").patch(
   verifyJWT,
   requireRole("admin"),
   // TODO: Add adminUpdateUser controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "Admin user update endpoint not implemented yet",
     });
@@ -148,8 +148,8 @@ router.route("/admin/users/:userId/deactivate").patch(
   verifyJWT,
   requireRole("admin"),
   // TODO: Add deactivateUser controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "User deactivation endpoint not implemented yet",
     });
@@ -161,8 +161,8 @@ router.route("/teacher/students").get(
   verifyJWT,
   requireRole("teacher", "admin"),
   // TODO: Add getTeacherStudents controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "Teacher students endpoint not implemented yet",
     });
@@ -173,8 +173,8 @@ router.route("/teacher/assignments").post(
   verifyJWT,
   requireRole("teacher", "admin"),
   // TODO: Add createAssignment controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "Create assignment endpoint not implemented yet",
     });
@@ -186,8 +186,8 @@ router.route("/search/students").get(
   verifyJWT,
   requireRole("teacher", "admin"),
   // TODO: Add searchStudents controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "Student search endpoint not implemented yet",
     });
@@ -197,13 +197,13 @@ router.route("/search/students").get(
 // 12. Role-specific dashboard data
 router.route("/dashboard/:role").get(
   verifyJWT,
-  (req, res, next) => {
+  (req, response, next) => {
     const { role } = req.params;
     const userRole = req.user.userRole;
 
     // Users can only access their own role's dashboard
     if (role !== userRole) {
-      return res.status(403).json({
+      return response.status(403).json({
         success: false,
         message: "Access denied. You can only access your own role's dashboard",
       });
@@ -212,8 +212,8 @@ router.route("/dashboard/:role").get(
     next();
   },
   // TODO: Add getDashboardData controller
-  (req, res) => {
-    res.status(501).json({
+  (req, response) => {
+    response.status(501).json({
       success: false,
       message: "Dashboard data endpoint not implemented yet",
     });
@@ -223,11 +223,11 @@ router.route("/dashboard/:role").get(
 // ============================= //
 
 // Error handling middleware for this router
-router.use((error, req, res, next) => {
+router.use((error, req, response, next) => {
   console.error("User routes error:", error);
 
   if (error.name === "ValidationError") {
-    return res.status(400).json({
+    return response.status(400).json({
       success: false,
       message: "Validation error",
       errors: Object.values(error.errors).map((err) => err.message),
@@ -235,13 +235,13 @@ router.use((error, req, res, next) => {
   }
 
   if (error.code === 11000) {
-    return res.status(409).json({
+    return response.status(409).json({
       success: false,
       message: "Duplicate field value entered",
     });
   }
 
-  res.status(error.statusCode || 500).json({
+  response.status(error.statusCode || 500).json({
     success: false,
     message: error.message || "Internal server error",
   });

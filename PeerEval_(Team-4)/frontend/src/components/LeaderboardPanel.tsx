@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   X,
   Trophy,
@@ -8,6 +9,9 @@ import {
   TrendingUp,
   RefreshCw,
 } from "lucide-react";
+import { apiService } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
+
 
 interface LeaderboardEntry {
   id: string;

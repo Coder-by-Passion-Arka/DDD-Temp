@@ -6,17 +6,17 @@ import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
-import EvaluationAssignmentService from "../services/evaluationAssigner.js";
+import EvaluationAssignmentService from "../services/evaluationAssigner.service.js";
 
 // Get evaluations for current user (all types)
-const getUserEvaluations = asyncHandler(async (req, res) => {
-  const { status, type = "all" } = req.query;
+const getUserEvaluations = asyncHandler(async (request, response) => {
+  const { status, type = "all" } = request.query;
 
   let evaluations = { toEvaluate: [], completed: [], received: [] };
 
   try {
     // Get evaluations where user is the evaluator (to evaluate)
-    const toEvaluateQuery = { evaluatorId: req.user._id };
+    const toEvaluateQuery = { evaluatorId: request.user._id };
     if (status) {
       toEvaluateQuery.status = status;
     } else {
@@ -31,7 +31,7 @@ const getUserEvaluations = asyncHandler(async (req, res) => {
 
     // Get evaluations user has completed
     const completedQuery = {
-      evaluatorId: req.user._id,
+      evaluatorId: request.user._id,
       status: { $in: ["submitted", "reviewed", "finalized"] },
     };
     const completed = await Evaluation.find(completedQuery)
@@ -40,7 +40,7 @@ const getUserEvaluations = asyncHandler(async (req, res) => {
       .sort({ submittedAt: -1 });
 
     // Get evaluations of user's submissions (received)
-    const receivedQuery = { submitterId: req.user._id };
+    const receivedQuery = { submitterId: request.user._id };
     if (status) {
       receivedQuery.status = status;
     }
@@ -61,7 +61,7 @@ const getUserEvaluations = asyncHandler(async (req, res) => {
       evaluations.received = received;
     }
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(
@@ -77,8 +77,8 @@ const getUserEvaluations = asyncHandler(async (req, res) => {
 });
 
 // Get single evaluation by ID
-const getEvaluation = asyncHandler(async (req, res) => {
-  const { evaluationId } = req.params;
+const getEvaluation = asyncHandler(async (request, response) => {
+  const { evaluationId } = request.params;
 
   if (!mongoose.Types.ObjectId.isValid(evaluationId)) {
     throw new ApiError(400, "Invalid evaluation ID");
@@ -99,10 +99,10 @@ const getEvaluation = asyncHandler(async (req, res) => {
 
   // Check permissions - user must be evaluator, submitter, or admin/instructor
   const isEvaluator =
-    evaluation.evaluatorId._id.toString() === req.user._id.toString();
+    evaluation.evaluatorId._id.toString() === request.user._id.toString();
   const isSubmitter =
-    evaluation.submitterId._id.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+    evaluation.submitterId._id.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   // Check if user is instructor of the course
   const assignment = await Assignment.findById(
@@ -110,8 +110,9 @@ const getEvaluation = asyncHandler(async (req, res) => {
   ).populate("courseId");
   const isInstructor =
     assignment &&
-    (assignment.createdBy.toString() === req.user._id.toString() ||
-      assignment.courseId.instructor.toString() === req.user._id.toString());
+    (assignment.createdBy.toString() === request.user._id.toString() ||
+      assignment.courseId.instructor.toString() ===
+        request.user._id.toString());
 
   if (!isEvaluator && !isSubmitter && !isAdmin && !isInstructor) {
     throw new ApiError(403, "Access denied to this evaluation");
@@ -127,7 +128,7 @@ const getEvaluation = asyncHandler(async (req, res) => {
     };
   }
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(
@@ -139,8 +140,8 @@ const getEvaluation = asyncHandler(async (req, res) => {
 });
 
 // Start evaluation (mark as in progress)
-const startEvaluation = asyncHandler(async (req, res) => {
-  const { evaluationId } = req.params;
+const startEvaluation = asyncHandler(async (request, response) => {
+  const { evaluationId } = request.params;
 
   if (!mongoose.Types.ObjectId.isValid(evaluationId)) {
     throw new ApiError(400, "Invalid evaluation ID");
@@ -153,7 +154,7 @@ const startEvaluation = asyncHandler(async (req, res) => {
   }
 
   // Check if user is the assigned evaluator
-  if (evaluation.evaluatorId.toString() !== req.user._id.toString()) {
+  if (evaluation.evaluatorId.toString() !== request.user._id.toString()) {
     throw new ApiError(403, "You are not assigned to this evaluation");
   }
 
@@ -181,7 +182,7 @@ const startEvaluation = asyncHandler(async (req, res) => {
     .populate("submissionId", "content attachments")
     .populate("submitterId", "userName userEmail");
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(200, updatedEvaluation, "Evaluation started successfully")
@@ -189,10 +190,10 @@ const startEvaluation = asyncHandler(async (req, res) => {
 });
 
 // Submit evaluation
-const submitEvaluation = asyncHandler(async (req, res) => {
-  const { evaluationId } = req.params;
+const submitEvaluation = asyncHandler(async (request, response) => {
+  const { evaluationId } = request.params;
   const { scores, totalScore, maxTotalScore, overallFeedback, grade } =
-    req.body;
+    request.body;
 
   if (!mongoose.Types.ObjectId.isValid(evaluationId)) {
     throw new ApiError(400, "Invalid evaluation ID");
@@ -218,7 +219,7 @@ const submitEvaluation = asyncHandler(async (req, res) => {
   }
 
   // Check if user is the assigned evaluator
-  if (evaluation.evaluatorId.toString() !== req.user._id.toString()) {
+  if (evaluation.evaluatorId.toString() !== request.user._id.toString()) {
     throw new ApiError(403, "You are not assigned to this evaluation");
   }
 
@@ -353,7 +354,7 @@ const submitEvaluation = asyncHandler(async (req, res) => {
     .populate("assignmentId", "title description")
     .populate("submitterId", "userName userEmail");
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(
@@ -365,10 +366,10 @@ const submitEvaluation = asyncHandler(async (req, res) => {
 });
 
 // Update evaluation (for drafts and in-progress evaluations)
-const updateEvaluation = asyncHandler(async (req, res) => {
-  const { evaluationId } = req.params;
+const updateEvaluation = asyncHandler(async (request, response) => {
+  const { evaluationId } = request.params;
   const { scores, totalScore, maxTotalScore, overallFeedback, grade } =
-    req.body;
+    request.body;
 
   if (!mongoose.Types.ObjectId.isValid(evaluationId)) {
     throw new ApiError(400, "Invalid evaluation ID");
@@ -381,7 +382,7 @@ const updateEvaluation = asyncHandler(async (req, res) => {
   }
 
   // Check if user is the assigned evaluator
-  if (evaluation.evaluatorId.toString() !== req.user._id.toString()) {
+  if (evaluation.evaluatorId.toString() !== request.user._id.toString()) {
     throw new ApiError(403, "You are not assigned to this evaluation");
   }
 
@@ -421,7 +422,7 @@ const updateEvaluation = asyncHandler(async (req, res) => {
     .populate("assignmentId", "title description")
     .populate("submitterId", "userName userEmail");
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(200, updatedEvaluation, "Evaluation updated successfully")
@@ -429,9 +430,9 @@ const updateEvaluation = asyncHandler(async (req, res) => {
 });
 
 // Get evaluations for a specific assignment (instructor view)
-const getAssignmentEvaluations = asyncHandler(async (req, res) => {
-  const { assignmentId } = req.params;
-  const { status, page = 1, limit = 20 } = req.query;
+const getAssignmentEvaluations = asyncHandler(async (request, response) => {
+  const { assignmentId } = request.params;
+  const { status, page = 1, limit = 20 } = request.query;
 
   if (!mongoose.Types.ObjectId.isValid(assignmentId)) {
     throw new ApiError(400, "Invalid assignment ID");
@@ -443,13 +444,15 @@ const getAssignmentEvaluations = asyncHandler(async (req, res) => {
   }
 
   // Check permissions
-  const isCreator = assignment.createdBy.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+  const isCreator =
+    assignment.createdBy.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   // Check if user is course instructor
   const course = await Assignment.findById(assignmentId).populate("courseId");
   const isInstructor =
-    course && course.courseId.instructor.toString() === req.user._id.toString();
+    course &&
+    course.courseId.instructor.toString() === request.user._id.toString();
 
   if (!isCreator && !isInstructor && !isAdmin) {
     throw new ApiError(403, "Not authorized to view assignment evaluations");
@@ -485,7 +488,7 @@ const getAssignmentEvaluations = asyncHandler(async (req, res) => {
     },
   ]);
 
-  return res.status(200).json(
+  return response.status(200).json(
     new ApiResponse(
       200,
       {
@@ -504,9 +507,9 @@ const getAssignmentEvaluations = asyncHandler(async (req, res) => {
 });
 
 // Reassign evaluation to different evaluator
-const reassignEvaluation = asyncHandler(async (req, res) => {
-  const { evaluationId } = req.params;
-  const { newEvaluatorId, reason } = req.body;
+const reassignEvaluation = asyncHandler(async (request, response) => {
+  const { evaluationId } = request.params;
+  const { newEvaluatorId, reason } = request.body;
 
   if (
     !mongoose.Types.ObjectId.isValid(evaluationId) ||
@@ -524,10 +527,11 @@ const reassignEvaluation = asyncHandler(async (req, res) => {
   const assignment = await Assignment.findById(
     evaluation.assignmentId
   ).populate("courseId");
-  const isCreator = assignment.createdBy.toString() === req.user._id.toString();
+  const isCreator =
+    assignment.createdBy.toString() === request.user._id.toString();
   const isInstructor =
-    assignment.courseId.instructor.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+    assignment.courseId.instructor.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   if (!isCreator && !isInstructor && !isAdmin) {
     throw new ApiError(403, "Not authorized to reassign evaluations");
@@ -552,7 +556,7 @@ const reassignEvaluation = asyncHandler(async (req, res) => {
         reason || "Reassigned by instructor"
       );
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(
@@ -567,9 +571,9 @@ const reassignEvaluation = asyncHandler(async (req, res) => {
 });
 
 // Mark evaluation as reviewed (instructor action)
-const reviewEvaluation = asyncHandler(async (req, res) => {
-  const { evaluationId } = req.params;
-  const { approved, reviewNotes } = req.body;
+const reviewEvaluation = asyncHandler(async (request, response) => {
+  const { evaluationId } = request.params;
+  const { approved, reviewNotes } = request.body;
 
   if (!mongoose.Types.ObjectId.isValid(evaluationId)) {
     throw new ApiError(400, "Invalid evaluation ID");
@@ -584,10 +588,11 @@ const reviewEvaluation = asyncHandler(async (req, res) => {
   const assignment = await Assignment.findById(
     evaluation.assignmentId
   ).populate("courseId");
-  const isCreator = assignment.createdBy.toString() === req.user._id.toString();
+  const isCreator =
+    assignment.createdBy.toString() === request.user._id.toString();
   const isInstructor =
-    assignment.courseId.instructor.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+    assignment.courseId.instructor.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   if (!isCreator && !isInstructor && !isAdmin) {
     throw new ApiError(403, "Not authorized to review evaluations");
@@ -611,7 +616,7 @@ const reviewEvaluation = asyncHandler(async (req, res) => {
     .populate("evaluatorId", "userName userEmail")
     .populate("submitterId", "userName userEmail");
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(
@@ -625,8 +630,8 @@ const reviewEvaluation = asyncHandler(async (req, res) => {
 });
 
 // Get evaluation assignment statistics for dashboard
-const getEvaluationStatistics = asyncHandler(async (req, res) => {
-  const { assignmentId } = req.query;
+const getEvaluationStatistics = asyncHandler(async (request, response) => {
+  const { assignmentId } = request.query;
 
   let query = {};
 
@@ -644,10 +649,10 @@ const getEvaluationStatistics = asyncHandler(async (req, res) => {
     }
 
     const isCreator =
-      assignment.createdBy.toString() === req.user._id.toString();
+      assignment.createdBy.toString() === request.user._id.toString();
     const isInstructor =
-      assignment.courseId.instructor.toString() === req.user._id.toString();
-    const isAdmin = req.user.userRole === "admin";
+      assignment.courseId.instructor.toString() === request.user._id.toString();
+    const isAdmin = request.user.userRole === "admin";
 
     if (!isCreator && !isInstructor && !isAdmin) {
       throw new ApiError(403, "Not authorized to view evaluation statistics");
@@ -657,7 +662,10 @@ const getEvaluationStatistics = asyncHandler(async (req, res) => {
   } else {
     // Get user's evaluation statistics
     query = {
-      $or: [{ evaluatorId: req.user._id }, { submitterId: req.user._id }],
+      $or: [
+        { evaluatorId: request.user._id },
+        { submitterId: request.user._id },
+      ],
     };
   }
 
@@ -681,13 +689,13 @@ const getEvaluationStatistics = asyncHandler(async (req, res) => {
     let userStats = {};
     if (!assignmentId) {
       const asEvaluator = await Evaluation.countDocuments({
-        evaluatorId: req.user._id,
+        evaluatorId: request.user._id,
       });
       const asSubmitter = await Evaluation.countDocuments({
-        submitterId: req.user._id,
+        submitterId: request.user._id,
       });
       const completedAsEvaluator = await Evaluation.countDocuments({
-        evaluatorId: req.user._id,
+        evaluatorId: request.user._id,
         status: { $in: ["submitted", "reviewed", "finalized"] },
       });
 
@@ -702,7 +710,7 @@ const getEvaluationStatistics = asyncHandler(async (req, res) => {
       };
     }
 
-    return res.status(200).json(
+    return response.status(200).json(
       new ApiResponse(
         200,
         {

@@ -1,3 +1,4 @@
+// This file contains the controllers for social platform authentication like Google and GitHub
 import asyncHandler from "express-async-handler";
 import User from "../models/user.models.js";
 import ApiResponse from "../utils/apiResponse.js";
@@ -21,31 +22,30 @@ const generateTokensForSocialUser = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new ApiError(
-      500,
-      "Error generating tokens for social login user."
-    );
+    throw new ApiError(500, "Error generating tokens for social login user.");
   }
 };
 
 // Google authentication callback
-export const googleCallback = asyncHandler(async (req, res) => {
+export const googleCallback = asyncHandler(async (request, response) => {
   try {
-    if (!req.user) {
-      return res.redirect("/login?error=Google authentication failed");
+    if (!request.user) {
+      return response.redirect("/login?error=Google authentication failed");
     }
 
-    const { accessToken, refreshToken } = await generateTokensForSocialUser(req.user._id);
+    const { accessToken, refreshToken } = await generateTokensForSocialUser(
+      request.user._id
+    );
 
     // Set cookies
-    res.cookie("accessToken", accessToken, {
+    response.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
-    
-    res.cookie("refreshToken", refreshToken, {
+
+    response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -53,31 +53,35 @@ export const googleCallback = asyncHandler(async (req, res) => {
     });
 
     // Redirect to frontend with success
-    return res.redirect("/dashboard");
+    return response.redirect("/dashboard");
   } catch (error) {
     console.error("Google auth error:", error);
-    return res.redirect("/login?error=Internal server error during Google authentication");
+    return response.redirect(
+      "/login?error=Internal server error during Google authentication"
+    );
   }
 });
 
 // GitHub authentication callback
-export const githubCallback = asyncHandler(async (req, res) => {
+export const githubCallback = asyncHandler(async (request, response) => {
   try {
-    if (!req.user) {
-      return res.redirect("/login?error=GitHub authentication failed");
+    if (!request.user) {
+      return response.redirect("/login?error=GitHub authentication failed");
     }
 
-    const { accessToken, refreshToken } = await generateTokensForSocialUser(req.user._id);
+    const { accessToken, refreshToken } = await generateTokensForSocialUser(
+      request.user._id
+    );
 
     // Set cookies
-    res.cookie("accessToken", accessToken, {
+    response.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
-    
-    res.cookie("refreshToken", refreshToken, {
+
+    response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -85,59 +89,66 @@ export const githubCallback = asyncHandler(async (req, res) => {
     });
 
     // Redirect to frontend with success
-    return res.redirect("/dashboard");
+    return response.redirect("/dashboard");
   } catch (error) {
     console.error("GitHub auth error:", error);
-    return res.redirect("/login?error=Internal server error during GitHub authentication");
+    return response.redirect(
+      "/login?error=Internal server error during GitHub authentication"
+    );
   }
 });
 
 // Get current user's social profile
-export const getSocialProfile = asyncHandler(async (req, res) => {
+export const getSocialProfile = asyncHandler(async (request, response) => {
   try {
-    const user = await User.findById(req.user._id).select("-userPassword -refreshToken");
-    
+    const user = await User.findById(request.user._id).select(
+      "-userPassword -refreshToken"
+    );
+
     if (!user) {
       throw new ApiError(404, "User not found");
     }
-    
-    return res.status(200).json(
-      new ApiResponse(200, user, "Social profile fetched successfully")
-    );
+
+    return response
+      .status(200)
+      .json(new ApiResponse(200, user, "Social profile fetched successfully"));
   } catch (error) {
     throw new ApiError(500, "Error fetching social profile");
   }
 });
 
 // Complete social profile (for first-time social login users)
-export const completeSocialProfile = asyncHandler(async (req, res) => {
+export const completeSocialProfile = asyncHandler(async (request, response) => {
   try {
-    const { userPhoneNumber, countryCode, userLocation, userRole } = req.body;
-    
+    const { userPhoneNumber, countryCode, userLocation, userRole } =
+      request.body;
+
     // Validate required fields
     if (!userPhoneNumber || !countryCode || !userLocation || !userRole) {
       throw new ApiError(400, "Missing required fields");
     }
-    
+
     // Update user profile
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      request.user._id,
       {
         userPhoneNumber,
         countryCode,
         userLocation,
-        userRole
+        userRole,
       },
       { new: true }
     ).select("-userPassword -refreshToken");
-    
+
     if (!user) {
       throw new ApiError(404, "User not found");
     }
-    
-    return res.status(200).json(
-      new ApiResponse(200, user, "Social profile completed successfully")
-    );
+
+    return response
+      .status(200)
+      .json(
+        new ApiResponse(200, user, "Social profile completed successfully")
+      );
   } catch (error) {
     throw new ApiError(500, "Error completing social profile");
   }

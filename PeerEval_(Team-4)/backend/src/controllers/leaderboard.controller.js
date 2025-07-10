@@ -1,12 +1,15 @@
 import LeaderBoard from "../models/leaderBoard.model.js";
 import User from "../models/user.models.js";
+import Evaluation from "../models/evaluation.models.js";
+import Submission from "../models/submissions.models.js";
 
 // Get all leaderboard data
 export const getLeaderboard = async (request, response) => {
   try {
     const leaderboardData = await LeaderBoard.find()
       .populate("userId", "userName userEmail userProfileImage")
-      .sort({ rank: 1 }) // Sort by rank ascending (1, 2, 3...)
+      // TODO: Do we need to sort here or later down the code with score logic?
+      // .sort({ rank: 1 }) // Sort by Ascending order
       .lean();
 
     // Transform data to match frontend interface
@@ -52,17 +55,18 @@ export const updateLeaderboard = async (request, response) => {
       // Get existing leaderboard entry
       const existingEntry = await LeaderBoard.findOne({ userId: user._id });
 
-      // Calculate scores (this is where you'd integrate with your actual scoring logic)
-      const evaluationsCompleted = await calculateEvaluationsCompleted(
-        user._id
-      );
-      const assignmentsSubmitted = await calculateAssignmentsSubmitted(
-        user._id
-      );
+      // TODO: Calculate scores (this is where you'd integrate with your actual scoring logic)
+      // const evaluationsCompleted = await calculateEvaluationsCompleted(
+      //   user._id
+      // );
+      // const assignmentsSubmitted = await calculateAssignmentsSubmitted(
+      //   user._id
+      // );
 
-      // Calculate total score
-      const score = evaluationsCompleted * 25 + assignmentsSubmitted * 15;
+      // Calculate total score ()
+      const score = calculateScore(user?._id);
 
+      // Update the Leaderboard object
       const updateData = {
         userId: user._id,
         userName: user.userName,
@@ -123,17 +127,39 @@ export const updateLeaderboard = async (request, response) => {
   }
 };
 
-// Helper functions (you'll need to implement these based on your actual data models)
-async function calculateEvaluationsCompleted(userId) {
-  // TODO: Implement based on your evaluation/assessment models
-  // Example: return await Evaluation.countDocuments({ userId, status: 'completed' });
-  return Math.floor(Math.random() * 100); // Placeholder
+// TODO:Helper function to implement score calculation logic
+async function calculateScore(userId) {
+  //  Implement based on your evaluation/assessment models
+
+  // 1. Evaluations Metrics
+  const evaluationsCompleted = await Evaluation.find({ userId, status: 'completed' }).countDocuments();
+  const totalEvaluationScore = await Evaluation.find({ userId, status: 'completed' }).sum('score');
+  const evaluationInProgress = await Evaluation.find({ userId, status: 'in-progress' }).countDocuments();
+  const evaluationSubmitted = await Evaluation.find({ userId, status: 'submitted' }).countDocuments();
+
+  // 2. Submission Metrics
+  const submissionsCompleted = await Submission.find(userId).countDocuments();
+  const totalSubmissionScore = await Submission.find(userId).sum('score');
+  const submissionInProgress = await Submission.find(userId).countDocuments({ status: 'under_evaluation' });
+  const submissionSubmitted = await Submission.find(userId).countDocuments({ status: 'submitted' });
+
+  // TODO: Improve logic to calculate score for leaderboard
+  const scoreForLeaderboard =
+    (evaluationsCompleted + submissionsCompleted) + (totalEvaluationScore + totalSubmissionScore) + (submissionInProgress + evaluationInProgress) + (submissionSubmitted + evaluationSubmitted);
+
+  // Normalise the score to a percentage
+  return Math.floor(scoreForLeaderboard / 100);
+
 }
 
+async function calculateEvaluationsCompleted(userId){
+  const totalEvaluationsCompleted = await Evaluation.find({ userId, status: 'completed' }).countDocuments();
+  return totalEvaluationsCompleted;
+}
 async function calculateAssignmentsSubmitted(userId) {
-  // TODO: Implement based on your assignment models
-  // Example: return await Assignment.countDocuments({ userId, status: 'submitted' });
-  return Math.floor(Math.random() * 50); // Placeholder
+  //TODO: Improve logic
+  const totalAssignmentsSubmitted = await Assignment.find({ userId }).countDocuments();
+  return totalAssignmentsSubmitted;
 }
 
 // Get leaderboard for specific students (alias for getLeaderboard)

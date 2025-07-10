@@ -7,7 +7,7 @@ import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 
 // Create a new course
-const createCourse = asyncHandler(async (req, res) => {
+const createCourse = asyncHandler(async (request, response) => {
   const {
     title,
     description,
@@ -18,7 +18,7 @@ const createCourse = asyncHandler(async (req, res) => {
     tags,
     syllabus,
     materials,
-  } = req.body;
+  } = request.body;
 
   // Validation
   if (!title || !description || !courseCode) {
@@ -48,13 +48,13 @@ const createCourse = asyncHandler(async (req, res) => {
   }
 
   // Determine instructor
-  let instructorId = instructor || req.user._id;
+  let instructorId = instructor || request.user._id;
 
   // Only admins can assign different instructors
   if (
     instructor &&
-    instructor !== req.user._id.toString() &&
-    req.user.userRole !== "admin"
+    instructor !== request.user._id.toString() &&
+    request.user.userRole !== "admin"
   ) {
     throw new ApiError(
       403,
@@ -63,7 +63,7 @@ const createCourse = asyncHandler(async (req, res) => {
   }
 
   // Validate instructor exists and has teacher role
-  if (instructor && instructor !== req.user._id.toString()) {
+  if (instructor && instructor !== request.user._id.toString()) {
     const instructorUser = await User.findById(instructor);
     if (!instructorUser) {
       throw new ApiError(404, "Instructor not found");
@@ -108,7 +108,7 @@ const createCourse = asyncHandler(async (req, res) => {
     description: description.trim(),
     courseCode: courseCode.toUpperCase().trim(),
     instructor: instructorId,
-    createdBy: req.user._id,
+    createdBy: request.user._id,
     schedule: {
       startDate,
       endDate,
@@ -131,13 +131,13 @@ const createCourse = asyncHandler(async (req, res) => {
     .populate("instructor", "userName userEmail")
     .populate("createdBy", "userName userEmail");
 
-  return res
+  return response
     .status(201)
     .json(new ApiResponse(201, createdCourse, "Course created successfully"));
 });
 
 // Get all courses (with filters)
-const getCourses = asyncHandler(async (req, res) => {
+const getCourses = asyncHandler(async (request, response) => {
   const {
     page = 1,
     limit = 10,
@@ -147,21 +147,24 @@ const getCourses = asyncHandler(async (req, res) => {
     tags = "",
     sortBy = "createdAt",
     sortOrder = "desc",
-  } = req.query;
+  } = request.query;
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
   // Build query based on user role
   let baseQuery = {};
 
-  switch (req.user.userRole) {
+  switch (request.user.userRole) {
     case "admin":
       // Admins can see all courses
       break;
     case "teacher":
       // Teachers can see courses they created or instruct
       baseQuery = {
-        $or: [{ instructor: req.user._id }, { createdBy: req.user._id }],
+        $or: [
+          { instructor: request.user._id },
+          { createdBy: request.user._id },
+        ],
       };
       break;
     case "student":
@@ -169,7 +172,7 @@ const getCourses = asyncHandler(async (req, res) => {
       baseQuery = {
         $or: [
           {
-            "enrolledStudents.student": req.user._id,
+            "enrolledStudents.student": request.user._id,
             "enrolledStudents.status": "active",
           },
           {
@@ -224,7 +227,7 @@ const getCourses = asyncHandler(async (req, res) => {
 
   const totalCourses = await Course.countDocuments(query);
 
-  return res.status(200).json(
+  return response.status(200).json(
     new ApiResponse(
       200,
       {
@@ -242,8 +245,8 @@ const getCourses = asyncHandler(async (req, res) => {
 });
 
 // Get single course by ID
-const getCourse = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
+const getCourse = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -260,7 +263,7 @@ const getCourse = asyncHandler(async (req, res) => {
   }
 
   // Check if user can access this course
-  if (!course.canUserAccess(req.user._id, req.user.userRole)) {
+  if (!course.canUserAccess(request.user._id, request.user.userRole)) {
     throw new ApiError(403, "Access denied to this course");
   }
 
@@ -274,14 +277,14 @@ const getCourse = asyncHandler(async (req, res) => {
       "userName userEmail userProfileImage"
     );
 
-  return res
+  return response
     .status(200)
     .json(new ApiResponse(200, updatedCourse, "Course fetched successfully"));
 });
 
 // Update course
-const updateCourse = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
+const updateCourse = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
   const {
     title,
     description,
@@ -293,7 +296,7 @@ const updateCourse = asyncHandler(async (req, res) => {
     syllabus,
     materials,
     status,
-  } = req.body;
+  } = request.body;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -306,9 +309,10 @@ const updateCourse = asyncHandler(async (req, res) => {
   }
 
   // Check permissions
-  const isOwner = course.createdBy.toString() === req.user._id.toString();
-  const isInstructor = course.instructor.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+  const isOwner = course.createdBy.toString() === request.user._id.toString();
+  const isInstructor =
+    course.instructor.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   if (!isOwner && !isInstructor && !isAdmin) {
     throw new ApiError(403, "Not authorized to update this course");
@@ -419,14 +423,14 @@ const updateCourse = asyncHandler(async (req, res) => {
     .populate("createdBy", "userName userEmail")
     .populate("enrolledStudents.student", "userName userEmail");
 
-  return res
+  return response
     .status(200)
     .json(new ApiResponse(200, updatedCourse, "Course updated successfully"));
 });
 
 // Delete course
-const deleteCourse = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
+const deleteCourse = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -439,8 +443,8 @@ const deleteCourse = asyncHandler(async (req, res) => {
   }
 
   // Check permissions - only course creator or admin can delete
-  const isOwner = course.createdBy.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+  const isOwner = course.createdBy.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   if (!isOwner && !isAdmin) {
     throw new ApiError(403, "Not authorized to delete this course");
@@ -461,15 +465,15 @@ const deleteCourse = asyncHandler(async (req, res) => {
 
   await Course.findByIdAndDelete(courseId);
 
-  return res
+  return response
     .status(200)
     .json(new ApiResponse(200, {}, "Course deleted successfully"));
 });
 
 // Enroll student in course
-const enrollStudent = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
-  const { studentId } = req.body;
+const enrollStudent = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
+  const { studentId } = request.body;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -482,13 +486,13 @@ const enrollStudent = asyncHandler(async (req, res) => {
   }
 
   // Determine student to enroll
-  let targetStudentId = studentId || req.user._id;
+  let targetStudentId = studentId || request.user._id;
 
   // Only instructors/admins can enroll other students
-  if (studentId && studentId !== req.user._id.toString()) {
+  if (studentId && studentId !== request.user._id.toString()) {
     const isInstructor =
-      course.instructor.toString() === req.user._id.toString();
-    const isAdmin = req.user.userRole === "admin";
+      course.instructor.toString() === request.user._id.toString();
+    const isAdmin = request.user.userRole === "admin";
 
     if (!isInstructor && !isAdmin) {
       throw new ApiError(403, "Not authorized to enroll other students");
@@ -498,8 +502,8 @@ const enrollStudent = asyncHandler(async (req, res) => {
   // For self-enrollment, check if it's allowed
   if (!studentId && !course.settings.allowSelfEnrollment) {
     const isInstructor =
-      course.instructor.toString() === req.user._id.toString();
-    const isAdmin = req.user.userRole === "admin";
+      course.instructor.toString() === request.user._id.toString();
+    const isAdmin = request.user.userRole === "admin";
 
     if (!isInstructor && !isAdmin) {
       throw new ApiError(403, "Self-enrollment is not allowed for this course");
@@ -525,7 +529,7 @@ const enrollStudent = asyncHandler(async (req, res) => {
       "userName userEmail"
     );
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(200, updatedCourse, "Student enrolled successfully")
@@ -536,9 +540,9 @@ const enrollStudent = asyncHandler(async (req, res) => {
 });
 
 // Unenroll student from course
-const unenrollStudent = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
-  const { studentId, reason = "dropped" } = req.body;
+const unenrollStudent = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
+  const { studentId, reason = "dropped" } = request.body;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -551,13 +555,13 @@ const unenrollStudent = asyncHandler(async (req, res) => {
   }
 
   // Determine student to unenroll
-  let targetStudentId = studentId || req.user._id;
+  let targetStudentId = studentId || request.user._id;
 
   // Only instructors/admins can unenroll other students
-  if (studentId && studentId !== req.user._id.toString()) {
+  if (studentId && studentId !== request.user._id.toString()) {
     const isInstructor =
-      course.instructor.toString() === req.user._id.toString();
-    const isAdmin = req.user.userRole === "admin";
+      course.instructor.toString() === request.user._id.toString();
+    const isAdmin = request.user.userRole === "admin";
 
     if (!isInstructor && !isAdmin) {
       throw new ApiError(403, "Not authorized to unenroll other students");
@@ -573,7 +577,7 @@ const unenrollStudent = asyncHandler(async (req, res) => {
       "userName userEmail"
     );
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(200, updatedCourse, "Student unenrolled successfully")
@@ -584,9 +588,9 @@ const unenrollStudent = asyncHandler(async (req, res) => {
 });
 
 // Get course enrollments
-const getCourseEnrollments = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
-  const { status = "active" } = req.query;
+const getCourseEnrollments = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
+  const { status = "active" } = request.query;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -602,7 +606,7 @@ const getCourseEnrollments = asyncHandler(async (req, res) => {
   }
 
   // Check permissions
-  if (!course.canUserAccess(req.user._id, req.user.userRole)) {
+  if (!course.canUserAccess(request.user._id, request.user.userRole)) {
     throw new ApiError(403, "Access denied to this course");
   }
 
@@ -611,7 +615,7 @@ const getCourseEnrollments = asyncHandler(async (req, res) => {
     (enrollment) => !status || enrollment.status === status
   );
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(
@@ -623,17 +627,17 @@ const getCourseEnrollments = asyncHandler(async (req, res) => {
 });
 
 // Get courses for user (based on role)
-const getUserCourses = asyncHandler(async (req, res) => {
-  const { status } = req.query;
+const getUserCourses = asyncHandler(async (request, response) => {
+  const { status } = request.query;
 
   try {
     const courses = await Course.getCoursesForUser(
-      req.user._id,
-      req.user.userRole,
+      request.user._id,
+      request.user.userRole,
       { status }
     );
 
-    return res
+    return response
       .status(200)
       .json(new ApiResponse(200, courses, "User courses fetched successfully"));
   } catch (error) {
@@ -642,8 +646,8 @@ const getUserCourses = asyncHandler(async (req, res) => {
 });
 
 // Update course statistics (admin/instructor only)
-const updateCourseStatistics = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
+const updateCourseStatistics = asyncHandler(async (request, response) => {
+  const { courseId } = request.params;
 
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     throw new ApiError(400, "Invalid course ID");
@@ -656,8 +660,9 @@ const updateCourseStatistics = asyncHandler(async (req, res) => {
   }
 
   // Check permissions
-  const isInstructor = course.instructor.toString() === req.user._id.toString();
-  const isAdmin = req.user.userRole === "admin";
+  const isInstructor =
+    course.instructor.toString() === request.user._id.toString();
+  const isAdmin = request.user.userRole === "admin";
 
   if (!isInstructor && !isAdmin) {
     throw new ApiError(403, "Not authorized to update course statistics");
@@ -666,7 +671,7 @@ const updateCourseStatistics = asyncHandler(async (req, res) => {
   try {
     const updatedCourse = await Course.updateCourseStatistics(courseId);
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(

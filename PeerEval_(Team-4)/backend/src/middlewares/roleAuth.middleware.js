@@ -16,11 +16,11 @@ const ROLE_HIERARCHY = {
 /**
  * Middleware to verify JWT token and attach user to request
  */
-export const verifyJWT = asyncHandler(async (req, res, next) => {
+export const verifyJWT = asyncHandler(async (request, response, next) => {
   try {
     const token =
-      req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer ", "");
+      request.cookies?.accessToken ||
+      request.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
       throw new ApiError(401, "Authentication required. Please login.");
@@ -43,7 +43,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
       );
     }
 
-    req.user = user;
+    request.user = user;
     next();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
@@ -61,12 +61,12 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
  * @param {...string} allowedRoles - Array of allowed roles
  */
 export const requireRole = (...allowedRoles) => {
-  return asyncHandler(async (req, res, next) => {
-    if (!req.user) {
+  return asyncHandler(async (request, response, next) => {
+    if (!request.user) {
       throw new ApiError(401, "Authentication required.");
     }
 
-    const userRole = req.user.userRole;
+    const userRole = request.user.userRole;
 
     if (!allowedRoles.includes(userRole)) {
       throw new ApiError(
@@ -86,12 +86,12 @@ export const requireRole = (...allowedRoles) => {
  * @param {string} minimumRole - Minimum required role level
  */
 export const requireMinimumRole = (minimumRole) => {
-  return asyncHandler(async (req, res, next) => {
-    if (!req.user) {
+  return asyncHandler(async (request, response, next) => {
+    if (!request.user) {
       throw new ApiError(401, "Authentication required.");
     }
 
-    const userRole = req.user.userRole;
+    const userRole = request.user.userRole;
     const userLevel = ROLE_HIERARCHY[userRole] || 0;
     const requiredLevel = ROLE_HIERARCHY[minimumRole] || 0;
 
@@ -110,35 +110,37 @@ export const requireMinimumRole = (minimumRole) => {
  * Middleware to check if user can access specific profile
  * Users can access their own profile, teachers and admins can access any profile
  */
-export const canAccessProfile = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
-  const requestingUser = req.user;
+export const canAccessProfile = asyncHandler(
+  async (request, response, next) => {
+    const { userId } = request.params;
+    const requestingUser = request.user;
 
-  if (!requestingUser) {
-    throw new ApiError(401, "Authentication required.");
+    if (!requestingUser) {
+      throw new ApiError(401, "Authentication required.");
+    }
+
+    // Users can always access their own profile
+    if (userId === requestingUser._id.toString()) {
+      return next();
+    }
+
+    // Teachers and admins can access any profile
+    if (["teacher", "admin"].includes(requestingUser.userRole)) {
+      return next();
+    }
+
+    // Students can only access their own profile
+    throw new ApiError(403, "Students can only access their own profile.");
   }
-
-  // Users can always access their own profile
-  if (userId === requestingUser._id.toString()) {
-    return next();
-  }
-
-  // Teachers and admins can access any profile
-  if (["teacher", "admin"].includes(requestingUser.userRole)) {
-    return next();
-  }
-
-  // Students can only access their own profile
-  throw new ApiError(403, "Students can only access their own profile.");
-});
+);
 
 /**
  * Middleware to check if user can modify specific resource
  * @param {string} resourceType - Type of resource (assignment, evaluation, etc.)
  */
 export const canModifyResource = (resourceType) => {
-  return asyncHandler(async (req, res, next) => {
-    const requestingUser = req.user;
+  return asyncHandler(async (request, response, next) => {
+    const requestingUser = request.user;
 
     if (!requestingUser) {
       throw new ApiError(401, "Authentication required.");
@@ -196,8 +198,8 @@ export const requireOwnershipOrRole = (
   getResourceOwner,
   allowedRoles = ["admin"]
 ) => {
-  return asyncHandler(async (req, res, next) => {
-    const requestingUser = req.user;
+  return asyncHandler(async (request, response, next) => {
+    const requestingUser = request.user;
 
     if (!requestingUser) {
       throw new ApiError(401, "Authentication required.");
@@ -209,7 +211,7 @@ export const requireOwnershipOrRole = (
     }
 
     // Check if user owns the resource
-    const resourceOwnerId = await getResourceOwner(req);
+    const resourceOwnerId = await getResourceOwner(request);
 
     if (resourceOwnerId === requestingUser._id.toString()) {
       return next();
@@ -226,14 +228,14 @@ export const requireOwnershipOrRole = (
  * Middleware to log role-based actions for audit purposes
  */
 export const auditRoleAction = (action) => {
-  return (req, res, next) => {
-    const user = req.user;
+  return (request, response, next) => {
+    const user = request.user;
 
     if (user) {
       console.log(
         `[AUDIT] ${new Date().toISOString()} - User: ${user.userEmail} (${
           user.userRole
-        }) - Action: ${action} - IP: ${req.ip}`
+        }) - Action: ${action} - IP: ${request.ip}`
       );
     }
 
@@ -244,45 +246,49 @@ export const auditRoleAction = (action) => {
 /**
  * Middleware to validate role during role changes (admin only)
  */
-export const validateRoleChange = asyncHandler(async (req, res, next) => {
-  const { userRole } = req.body;
-  const requestingUser = req.user;
+export const validateRoleChange = asyncHandler(
+  async (request, response, next) => {
+    const { userRole } = request.body;
+    const requestingUser = request.user;
 
-  // Only admins can change roles
-  if (requestingUser.userRole !== "admin") {
-    throw new ApiError(403, "Only administrators can change user roles.");
+    // Only admins can change roles
+    if (requestingUser.userRole !== "admin") {
+      throw new ApiError(403, "Only administrators can change user roles.");
+    }
+
+    // Validate the new role
+    if (userRole && !VALID_ROLES.includes(userRole.toLowerCase())) {
+      throw new ApiError(
+        400,
+        "Invalid role. Valid roles are: student, teacher, admin"
+      );
+    }
+
+    next();
   }
-
-  // Validate the new role
-  if (userRole && !VALID_ROLES.includes(userRole.toLowerCase())) {
-    throw new ApiError(
-      400,
-      "Invalid role. Valid roles are: student, teacher, admin"
-    );
-  }
-
-  next();
-});
+);
 
 /**
  * Middleware to prevent students from accessing teacher/admin routes
  */
-export const restrictStudentAccess = asyncHandler(async (req, res, next) => {
-  const requestingUser = req.user;
+export const restrictStudentAccess = asyncHandler(
+  async (request, response, next) => {
+    const requestingUser = request.user;
 
-  if (!requestingUser) {
-    throw new ApiError(401, "Authentication required.");
+    if (!requestingUser) {
+      throw new ApiError(401, "Authentication required.");
+    }
+
+    if (requestingUser.userRole === "student") {
+      throw new ApiError(
+        403,
+        "Students are not authorized to access this resource."
+      );
+    }
+
+    next();
   }
-
-  if (requestingUser.userRole === "student") {
-    throw new ApiError(
-      403,
-      "Students are not authorized to access this resource."
-    );
-  }
-
-  next();
-});
+);
 
 /**
  * Middleware to check API rate limits based on user role
@@ -294,8 +300,8 @@ export const roleBasedRateLimit = () => {
     admin: { requests: 500, window: 15 * 60 * 1000 }, // 500 requests per 15 minutes
   };
 
-  return asyncHandler(async (req, res, next) => {
-    const user = req.user;
+  return asyncHandler(async (request, response, next) => {
+    const user = request.user;
 
     if (!user) {
       return next();
@@ -309,7 +315,7 @@ export const roleBasedRateLimit = () => {
 
     // This is a simplified implementation
     // In production, implement proper rate limiting with Redis
-    req.rateLimit = {
+    request.rateLimit = {
       limit: limit.requests,
       window: limit.window,
       key: key,
@@ -322,22 +328,22 @@ export const roleBasedRateLimit = () => {
 /**
  * Error handling middleware for role-based operations
  */
-export const handleRoleErrors = (error, req, res, next) => {
+export const handleRoleErrors = (error, request, response, next) => {
   console.error("Role-based access error:", error);
 
   // Handle specific role-related errors
   if (error.statusCode === 403) {
-    return res.status(403).json({
+    return response.status(403).json({
       success: false,
       message: error.message,
       code: "ACCESS_DENIED",
-      userRole: req.user?.userRole || "unknown",
+      userRole: request.user?.userRole || "unknown",
       timestamp: new Date().toISOString(),
     });
   }
 
   if (error.statusCode === 401) {
-    return res.status(401).json({
+    return response.status(401).json({
       success: false,
       message: error.message,
       code: "AUTHENTICATION_REQUIRED",

@@ -53,7 +53,7 @@
 //   },
 // });
 
-// ================================================ // 
+// ================================================ //
 
 import multer from "multer";
 import path from "path";
@@ -63,10 +63,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (request, file, cb) {
     cb(null, "./public/temp");
   },
-  filename: function (req, file, cb) {
+  filename: function (request, file, cb) {
     // Generate unique filename
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
@@ -76,7 +76,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const fileFilter = (req, file, cb) => {
+const fileFilter = (request, file, cb) => {
   // Allowed file types
   const allowedTypes = [
     "image/jpeg",

@@ -96,7 +96,7 @@
 
 // =================================================== //
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   ScrollText,
@@ -111,20 +111,22 @@ import {
   Shield,
   Target,
   BarChart3,
+  Plus,
+  Edit,
+  Trash2,
+  Crown,
+  Zap,
+  Heart,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { apiService } from "../services/api";
-
-interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  earnedAt: string;
-  category?: string;
-  points?: number;
-  rarity?: "common" | "rare" | "epic" | "legendary";
-}
+import {
+  // achievementApi,
+  Achievement,
+  AchievementsResponse,
+  AchievementStats,
+  CreateAchievementData,
+} from "../services/achievements.api";
+import achievementApi from "../services/achievements.api";
 
 const iconMap = {
   Medal,
@@ -138,175 +140,296 @@ const iconMap = {
   Shield,
   Target,
   BarChart3,
+  Crown,
+  Zap,
+  Heart,
+};
+
+interface AchievementModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: CreateAchievementData) => void;
+  userRole: string;
+  isLoading: boolean;
+}
+
+const AchievementModal: React.FC<AchievementModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  userRole,
+  isLoading,
+}) => {
+  const [formData, setFormData] = useState<CreateAchievementData>({
+    title: "",
+    description: "",
+    type: "",
+    category: "academic",
+    icon: "Medal",
+    points: 10,
+    userId: "",
+  });
+
+  const categories = achievementApi.getAchievementCategories(userRole);
+  const icons = Object.keys(iconMap);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            Award Achievement
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {userRole === "teacher" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Student ID (required for teachers)
+                </label>
+                <input
+                  type="text"
+                  value={formData.userId || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, userId: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  required={userRole === "teacher"}
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Title
+              </label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                rows={3}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Category
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Icon
+                </label>
+                <select
+                  value={formData.icon}
+                  onChange={(e) =>
+                    setFormData({ ...formData, icon: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                >
+                  {icons.map((icon) => (
+                    <option key={icon} value={icon}>
+                      {icon}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Type
+                </label>
+                <input
+                  type="text"
+                  value={formData.type}
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="e.g., first_assignment"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Points
+                </label>
+                <input
+                  type="number"
+                  value={formData.points}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      points: parseInt(e.target.value),
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  min="1"
+                  max="100"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center space-x-2"
+              >
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                <span>Award Achievement</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const Achievements: React.FC = () => {
   const { state } = useAuth();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [stats, setStats] = useState<AchievementStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAwardingAchievement, setIsAwardingAchievement] = useState(false);
+  const [showAwardModal, setShowAwardModal] = useState(false);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   const userRole = state.user?.userRole || "student";
+  const canManageAchievements = achievementApi.canManageAchievements(userRole);
+  const canDeleteAchievements = achievementApi.canDeleteAchievements(userRole);
+
+  // Fetch achievements from backend
+  const fetchAchievements = useCallback(async () => {
+    if (!state.user) return;
+
+    try {
+      setIsLoading(true);
+      setError("");
+
+      const params = {
+        page: currentPage,
+        limit: 12,
+        ...(selectedCategory && { category: selectedCategory }),
+      };
+
+      const response: AchievementsResponse =
+        await achievementApi.getUserAchievements(params);
+      setAchievements(response.achievements);
+      setTotalPages(response.pagination.totalPages);
+
+      // Also fetch stats
+      const statsResponse = await achievementApi.getAchievementStats();
+      setStats(statsResponse);
+    } catch (error: any) {
+      console.error("Error fetching achievements:", error);
+      setError(error.message || "Failed to load achievements");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [state.user, currentPage, selectedCategory]);
+
+  // Award achievement
+  const handleAwardAchievement = async (data: CreateAchievementData) => {
+    try {
+      setIsAwardingAchievement(true);
+
+      let newAchievement: Achievement;
+
+      if (userRole === "teacher") {
+        newAchievement = await achievementApi.teacherAwardAchievement(
+          data as CreateAchievementData & { userId: string }
+        );
+      } else if (userRole === "admin") {
+        newAchievement = await achievementApi.adminAwardAchievement(data);
+      } else {
+        newAchievement = await achievementApi.createAchievement(data);
+      }
+
+      // Refresh achievements list
+      await fetchAchievements();
+      setShowAwardModal(false);
+    } catch (error: any) {
+      console.error("Error awarding achievement:", error);
+      setError(error.message || "Failed to award achievement");
+    } finally {
+      setIsAwardingAchievement(false);
+    }
+  };
+
+  // Delete achievement
+  const handleDeleteAchievement = async (achievementId: string) => {
+    if (!canDeleteAchievements) return;
+
+    if (!confirm("Are you sure you want to delete this achievement?")) return;
+
+    try {
+      await achievementApi.deleteAchievement(achievementId);
+      await fetchAchievements(); // Refresh list
+    } catch (error: any) {
+      console.error("Error deleting achievement:", error);
+      setError(error.message || "Failed to delete achievement");
+    }
+  };
 
   useEffect(() => {
-    const fetchAchievements = async () => {
-      if (!state.user) return;
-
-      try {
-        setIsLoading(true);
-
-        // Mock achievements based on user role
-        let mockAchievements: Achievement[] = [];
-
-        switch (userRole) {
-          case "teacher":
-            mockAchievements = [
-              {
-                id: "t1",
-                title: "Master Educator",
-                description:
-                  "Successfully guided 50+ students through course completion",
-                icon: "BookOpen",
-                earnedAt: "2025-06-15",
-                category: "Teaching Excellence",
-                points: 100,
-                rarity: "epic",
-              },
-              {
-                id: "t2",
-                title: "Feedback Champion",
-                description: "Provided detailed feedback on 100+ assignments",
-                icon: "Star",
-                earnedAt: "2025-05-20",
-                category: "Student Support",
-                points: 75,
-                rarity: "rare",
-              },
-              {
-                id: "t3",
-                title: "Innovation Leader",
-                description: "Created 10+ unique assignment types",
-                icon: "Trophy",
-                earnedAt: "2025-04-10",
-                category: "Innovation",
-                points: 150,
-                rarity: "legendary",
-              },
-            ];
-            break;
-
-          case "admin":
-            mockAchievements = [
-              {
-                id: "a1",
-                title: "System Guardian",
-                description: "Maintained 99.9% uptime for 6 months",
-                icon: "Shield",
-                earnedAt: "2025-06-30",
-                category: "System Management",
-                points: 200,
-                rarity: "legendary",
-              },
-              {
-                id: "a2",
-                title: "User Advocate",
-                description: "Resolved 500+ user support tickets",
-                icon: "Users",
-                earnedAt: "2025-05-25",
-                category: "User Support",
-                points: 120,
-                rarity: "epic",
-              },
-              {
-                id: "a3",
-                title: "Platform Growth",
-                description: "Oversaw platform expansion to 1000+ users",
-                icon: "BarChart3",
-                earnedAt: "2025-04-15",
-                category: "Growth",
-                points: 175,
-                rarity: "legendary",
-              },
-            ];
-            break;
-
-          default: // student
-            mockAchievements = [
-              {
-                id: "s1",
-                title: "First Steps",
-                description: "Completed your first assignment submission",
-                icon: "Medal",
-                earnedAt: "2025-06-01",
-                category: "Getting Started",
-                points: 25,
-                rarity: "common",
-              },
-              {
-                id: "s2",
-                title: "Peer Evaluator",
-                description:
-                  "Completed 10 peer evaluations with quality feedback",
-                icon: "Star",
-                earnedAt: "2025-06-10",
-                category: "Peer Learning",
-                points: 50,
-                rarity: "rare",
-              },
-              {
-                id: "s3",
-                title: "High Achiever",
-                description:
-                  "Maintained an average score above 90% for a month",
-                icon: "Trophy",
-                earnedAt: "2025-06-20",
-                category: "Academic Excellence",
-                points: 100,
-                rarity: "epic",
-              },
-            ];
-        }
-
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 800));
-
-        setAchievements(mockAchievements);
-      } catch (error) {
-        console.error("Error fetching achievements:", error);
-        setError("Failed to load achievements");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchAchievements();
-  }, [state.user, userRole]);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-indigo-600" />
-          <p className="text-gray-600 dark:text-gray-400">
-            Loading achievements...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const totalPoints = achievements.reduce(
-    (sum, achievement) => sum + (achievement.points || 0),
-    0
-  );
-
-  const latestAchievement =
-    achievements.length > 0
-      ? achievements.sort(
-          (a, b) =>
-            new Date(b.earnedAt).getTime() - new Date(a.earnedAt).getTime()
-        )[0]
-      : null;
+  }, [fetchAchievements]);
 
   const getRarityColor = (rarity?: string) => {
     switch (rarity) {
@@ -337,7 +460,7 @@ const Achievements: React.FC = () => {
   const getRoleSpecificTitle = () => {
     switch (userRole) {
       case "teacher":
-        return "🏆 Teaching Achievements";
+        return "🎓 Teaching Achievements";
       case "admin":
         return "🛡️ Administrative Achievements";
       default:
@@ -378,20 +501,68 @@ const Achievements: React.FC = () => {
     }
   };
 
+  if (isLoading && achievements.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-indigo-600" />
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading achievements...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`p-4 sm:p-6 lg:p-8 bg-gradient-to-br ${getRoleGradient()} min-h-screen rounded-xl`}
     >
       {/* Header */}
       <div className="mb-6 sm:mb-8 lg:mb-10">
-        <h1
-          className={`text-2xl sm:text-3xl lg:text-4xl font-bold text-center ${getRoleAccentColor()} mb-2 sm:mb-3`}
-        >
-          {getRoleSpecificTitle()}
-        </h1>
-        <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300 text-center">
-          {getRoleSpecificDescription()}
-        </p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1
+              className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${getRoleAccentColor()}`}
+            >
+              {getRoleSpecificTitle()}
+            </h1>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300">
+              {getRoleSpecificDescription()}
+            </p>
+          </div>
+
+          {canManageAchievements && (
+            <button
+              onClick={() => setShowAwardModal(true)}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Award Achievement</span>
+            </button>
+          )}
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 items-center">
+          <select
+            value={selectedCategory}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+          >
+            <option value="">All Categories</option>
+            {achievementApi
+              .getAchievementCategories(userRole)
+              .map((category) => (
+                <option key={category} value={category}>
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </option>
+              ))}
+          </select>
+        </div>
       </div>
 
       {error && (
@@ -400,6 +571,43 @@ const Achievements: React.FC = () => {
         </div>
       )}
 
+      {/* Achievement Stats */}
+      {stats && (
+        <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 text-center border border-gray-200 dark:border-gray-700">
+            <div
+              className={`text-2xl sm:text-3xl font-bold mb-2 ${getRoleAccentColor()}`}
+            >
+              {stats.overview.totalAchievements}
+            </div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+              Total Achievements
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 text-center border border-gray-200 dark:border-gray-700">
+            <div
+              className={`text-2xl sm:text-3xl font-bold mb-2 ${getRoleAccentColor()}`}
+            >
+              {stats.overview.totalPoints}
+            </div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+              Total Points
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 text-center border border-gray-200 dark:border-gray-700">
+            <div
+              className={`text-2xl sm:text-3xl font-bold mb-2 ${getRoleAccentColor()}`}
+            >
+              {stats.overview.categories.length}
+            </div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+              Categories
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Achievements Grid */}
       {achievements.length === 0 ? (
         <div className="text-center py-12">
           <div className="w-24 h-24 mx-auto bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-700 dark:to-yellow-800 rounded-full flex items-center justify-center mb-6">
@@ -415,153 +623,32 @@ const Achievements: React.FC = () => {
               ? "Begin managing the platform and supporting users to unlock achievements!"
               : "Start completing assignments and participating in peer evaluations to earn your first achievements!"}
           </p>
-
-          {/* Role-specific achievement categories preview */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-4xl mx-auto border border-gray-200 dark:border-gray-700">
-            <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-              Achievement Categories
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {userRole === "teacher" ? (
-                <>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
-                      <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Teaching Excellence
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Student success rates, course completion, and teaching
-                      innovation
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-3">
-                      <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Student Engagement
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Feedback quality, student mentoring, and community
-                      building
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-3">
-                      <Star className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Innovation
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Creative assignments, new teaching methods, and platform
-                      contributions
-                    </p>
-                  </div>
-                </>
-              ) : userRole === "admin" ? (
-                <>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-3">
-                      <Shield className="w-8 h-8 text-red-600 dark:text-red-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      System Management
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Platform stability, security measures, and system
-                      optimization
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
-                      <Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      User Support
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Help desk excellence, user satisfaction, and community
-                      support
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-3">
-                      <BarChart3 className="w-8 h-8 text-green-600 dark:text-green-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Platform Growth
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      User acquisition, feature adoption, and strategic
-                      initiatives
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
-                      <ScrollText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Academic Excellence
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Assignment quality, consistent performance, and subject
-                      mastery
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-3">
-                      <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Peer Collaboration
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Quality evaluations, helpful feedback, and community
-                      participation
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-3">
-                      <Target className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Platform Engagement
-                    </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Consistent activity, skill development, and goal
-                      achievement
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
           {achievements.map((achievement, idx) => {
-            const IconComponent = iconMap[achievement.icon] || Medal;
+            const IconComponent =
+              iconMap[achievement.icon as keyof typeof iconMap] || Medal;
             return (
               <motion.div
-                key={achievement.id}
+                key={achievement._id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.2 }}
-                className={`bg-white rounded-2xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition border-2 ${getRarityBorder(
-                  achievement.rarity
-                )} dark:bg-gray-800 dark:hover:shadow-lg dark:hover:shadow-gray-900/50 ease-in-out delay-150 duration-300`}
+                transition={{ delay: idx * 0.1 }}
+                className={`bg-white rounded-2xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition border-2 border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:shadow-lg dark:hover:shadow-gray-900/50 ease-in-out delay-150 duration-300 relative`}
               >
+                {canDeleteAchievements && (
+                  <button
+                    onClick={() => handleDeleteAchievement(achievement._id)}
+                    className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+
                 <div className="flex items-start space-x-3 sm:space-x-4 mb-4">
                   <div
-                    className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br ${getRarityColor(
-                      achievement.rarity
-                    )} rounded-xl flex items-center justify-center`}
+                    className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center`}
                   >
                     <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
@@ -569,35 +656,13 @@ const Achievements: React.FC = () => {
                     <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-800 dark:text-white mb-2 leading-tight">
                       {achievement.title}
                     </h2>
-                    {achievement.category && (
-                      <span
-                        className={`inline-block px-2 py-1 rounded-full text-xs font-medium mb-2 ${
-                          achievement.rarity === "legendary"
-                            ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200"
-                            : achievement.rarity === "epic"
-                            ? "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200"
-                            : achievement.rarity === "rare"
-                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"
-                            : "bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200"
-                        }`}
-                      >
-                        {achievement.category}
-                      </span>
-                    )}
+                    <span className="inline-block px-2 py-1 rounded-full text-xs font-medium mb-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200">
+                      {achievement.category}
+                    </span>
                   </div>
                   {achievement.points && (
                     <div className="flex-shrink-0 text-right">
-                      <div
-                        className={`text-lg font-bold ${
-                          achievement.rarity === "legendary"
-                            ? "text-yellow-600 dark:text-yellow-400"
-                            : achievement.rarity === "epic"
-                            ? "text-purple-600 dark:text-purple-400"
-                            : achievement.rarity === "rare"
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
-                      >
+                      <div className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
                         +{achievement.points}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-300">
@@ -619,67 +684,41 @@ const Achievements: React.FC = () => {
         </div>
       )}
 
-      {/* Achievement Stats */}
-      <div className="mt-8 sm:mt-12 max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div
-            className={`bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 text-center border border-gray-200 dark:border-gray-700`}
-          >
-            <div
-              className={`text-2xl sm:text-3xl font-bold mb-2 ${getRoleAccentColor()}`}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {achievements.length}
-            </div>
-            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-              Total Achievements
-            </div>
-          </div>
-          <div
-            className={`bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 text-center border border-gray-200 dark:border-gray-700`}
-          >
-            <div
-              className={`text-2xl sm:text-3xl font-bold mb-2 ${getRoleAccentColor()}`}
+              Previous
+            </button>
+            <span className="px-3 py-2 bg-indigo-600 text-white rounded-lg">
+              {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {latestAchievement
-                ? new Date(latestAchievement.earnedAt).getFullYear()
-                : new Date().getFullYear()}
-            </div>
-            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-              Latest Year
-            </div>
-          </div>
-          <div
-            className={`bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 text-center border border-gray-200 dark:border-gray-700`}
-          >
-            <div
-              className={`text-2xl sm:text-3xl font-bold mb-2 ${getRoleAccentColor()}`}
-            >
-              {totalPoints}
-            </div>
-            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-              Total Points
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Progress motivation */}
-      {achievements.length > 0 && achievements.length < 5 && (
-        <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-6 border border-indigo-200 dark:border-indigo-800">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Keep Going! 🚀
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              {userRole === "teacher"
-                ? "You're building an impressive teaching portfolio. Continue engaging with students to unlock more achievements!"
-                : userRole === "admin"
-                ? "Your administrative excellence is showing. Keep managing the platform to earn more recognition!"
-                : "You're building an impressive achievement collection. Complete more assignments and engage with peers to unlock even more rewards!"}
-            </p>
+              Next
+            </button>
           </div>
         </div>
       )}
+
+      {/* Award Achievement Modal */}
+      <AchievementModal
+        isOpen={showAwardModal}
+        onClose={() => setShowAwardModal(false)}
+        onSubmit={handleAwardAchievement}
+        userRole={userRole}
+        isLoading={isAwardingAchievement}
+      />
     </div>
   );
 };

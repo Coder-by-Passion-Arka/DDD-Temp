@@ -39,14 +39,14 @@ import fs from "fs";
 import path from "path";
 
 // Upload single file
-const uploadFile = asyncHandler(async (req, res) => {
+const uploadFile = asyncHandler(async (request, response) => {
   try {
     // Check if file was uploaded
-    if (!req.file) {
+    if (!request.file) {
       throw new ApiError(400, "No file uploaded");
     }
 
-    const file = req.file;
+    const file = request.file;
 
     // Validate file size (additional check beyond multer)
     const maxSize = 50 * 1024 * 1024; // 50MB
@@ -100,7 +100,7 @@ const uploadFile = asyncHandler(async (req, res) => {
       size: file.size,
       format: uploadResult.format,
       resourceType: uploadResult.resource_type,
-      uploadedBy: req.user._id,
+      uploadedBy: request.user._id,
       uploadedAt: new Date(),
       metadata: {
         width: uploadResult.width,
@@ -112,27 +112,27 @@ const uploadFile = asyncHandler(async (req, res) => {
       },
     };
 
-    return res
+    return response
       .status(200)
       .json(new ApiResponse(200, fileData, "File uploaded successfully"));
   } catch (error) {
     // Clean up file if it exists and upload failed
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    if (request.file && fs.existsSync(request.file.path)) {
+      fs.unlinkSync(request.file.path);
     }
     throw error;
   }
 });
 
 // Upload multiple files
-const uploadMultipleFiles = asyncHandler(async (req, res) => {
+const uploadMultipleFiles = asyncHandler(async (request, response) => {
   try {
     // Check if files were uploaded
-    if (!req.files || req.files.length === 0) {
+    if (!request.files || request.files.length === 0) {
       throw new ApiError(400, "No files uploaded");
     }
 
-    const files = req.files;
+    const files = request.files;
     const maxFiles = 10; // Maximum 10 files as per multer config
 
     if (files.length > maxFiles) {
@@ -210,7 +210,7 @@ const uploadMultipleFiles = asyncHandler(async (req, res) => {
             size: file.size,
             format: uploadResult.format,
             resourceType: uploadResult.resource_type,
-            uploadedBy: req.user._id,
+            uploadedBy: request.user._id,
             uploadedAt: new Date(),
             metadata: {
               width: uploadResult.width,
@@ -256,13 +256,13 @@ const uploadMultipleFiles = asyncHandler(async (req, res) => {
         ? `${uploadResults.length} file(s) uploaded successfully`
         : "All file uploads failed";
 
-    return res
+    return response
       .status(statusCode)
       .json(new ApiResponse(statusCode, responseData, message));
   } catch (error) {
     // Clean up all files if they exist
-    if (req.files) {
-      req.files.forEach((file) => {
+    if (request.files) {
+      request.files.forEach((file) => {
         if (fs.existsSync(file.path)) {
           fs.unlinkSync(file.path);
         }
@@ -273,8 +273,8 @@ const uploadMultipleFiles = asyncHandler(async (req, res) => {
 });
 
 // Delete file from Cloudinary
-const deleteFile = asyncHandler(async (req, res) => {
-  const { publicId } = req.params;
+const deleteFile = asyncHandler(async (request, response) => {
+  const { publicId } = request.params;
 
   if (!publicId) {
     throw new ApiError(400, "Public ID is required");
@@ -292,7 +292,7 @@ const deleteFile = asyncHandler(async (req, res) => {
       throw new ApiError(404, "File not found");
     }
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(
@@ -307,8 +307,8 @@ const deleteFile = asyncHandler(async (req, res) => {
 });
 
 // Get file information
-const getFileInfo = asyncHandler(async (req, res) => {
-  const { publicId } = req.params;
+const getFileInfo = asyncHandler(async (request, response) => {
+  const { publicId } = request.params;
 
   if (!publicId) {
     throw new ApiError(400, "Public ID is required");
@@ -338,7 +338,7 @@ const getFileInfo = asyncHandler(async (req, res) => {
       },
     };
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(
@@ -359,19 +359,19 @@ const getFileInfo = asyncHandler(async (req, res) => {
 });
 
 // Upload file for specific assignment submission
-const uploadAssignmentFile = asyncHandler(async (req, res) => {
-  const { assignmentId } = req.params;
+const uploadAssignmentFile = asyncHandler(async (request, response) => {
+  const { assignmentId } = request.params;
 
   if (!assignmentId) {
     throw new ApiError(400, "Assignment ID is required");
   }
 
-  if (!req.file) {
+  if (!request.file) {
     throw new ApiError(400, "No file uploaded");
   }
 
   try {
-    const file = req.file;
+    const file = request.file;
 
     // Upload to Cloudinary with assignment-specific folder
     const uploadResult = await uploadOnCloudinary(file.path, {
@@ -395,7 +395,7 @@ const uploadAssignmentFile = asyncHandler(async (req, res) => {
       format: uploadResult.format,
       resourceType: uploadResult.resource_type,
       assignmentId,
-      uploadedBy: req.user._id,
+      uploadedBy: request.user._id,
       uploadedAt: new Date(),
       metadata: {
         width: uploadResult.width,
@@ -407,28 +407,28 @@ const uploadAssignmentFile = asyncHandler(async (req, res) => {
       },
     };
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(200, fileData, "Assignment file uploaded successfully")
       );
   } catch (error) {
     // Clean up file if it exists and upload failed
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    if (request.file && fs.existsSync(request.file.path)) {
+      fs.unlinkSync(request.file.path);
     }
     throw error;
   }
 });
 
 // Upload profile image
-const uploadProfileImage = asyncHandler(async (req, res) => {
-  if (!req.file) {
+const uploadProfileImage = asyncHandler(async (request, response) => {
+  if (!request.file) {
     throw new ApiError(400, "No image file uploaded");
   }
 
   try {
-    const file = req.file;
+    const file = request.file;
 
     // Validate that it's an image
     if (!file.mimetype.startsWith("image/")) {
@@ -444,7 +444,7 @@ const uploadProfileImage = asyncHandler(async (req, res) => {
 
     // Upload to Cloudinary with profile-specific folder
     const uploadResult = await uploadOnCloudinary(file.path, {
-      folder: `profiles/${req.user._id}`,
+      folder: `profiles/${request.user._id}`,
       transformation: [
         { width: 400, height: 400, crop: "fill", gravity: "face" },
         { quality: "auto", fetch_format: "auto" },
@@ -461,7 +461,7 @@ const uploadProfileImage = asyncHandler(async (req, res) => {
       originalName: file.originalname,
       size: file.size,
       format: uploadResult.format,
-      uploadedBy: req.user._id,
+      uploadedBy: request.user._id,
       uploadedAt: new Date(),
       metadata: {
         width: uploadResult.width,
@@ -470,26 +470,26 @@ const uploadProfileImage = asyncHandler(async (req, res) => {
       },
     };
 
-    return res
+    return response
       .status(200)
       .json(
         new ApiResponse(200, imageData, "Profile image uploaded successfully")
       );
   } catch (error) {
     // Clean up file if it exists and upload failed
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    if (request.file && fs.existsSync(request.file.path)) {
+      fs.unlinkSync(request.file.path);
     }
     throw error;
   }
 });
 
 // Get upload statistics (admin only)
-const getUploadStatistics = asyncHandler(async (req, res) => {
+const getUploadStatistics = asyncHandler(async (request, response) => {
   // This would typically query a database for upload statistics
   // For now, returning mock data structure
 
-  if (req.user.userRole !== "admin") {
+  if (request.user.userRole !== "admin") {
     throw new ApiError(403, "Access denied. Admin privileges required.");
   }
 
@@ -511,7 +511,7 @@ const getUploadStatistics = asyncHandler(async (req, res) => {
     },
   };
 
-  return res
+  return response
     .status(200)
     .json(
       new ApiResponse(200, stats, "Upload statistics retrieved successfully")

@@ -4,6 +4,9 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["node_modules/@types"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",

@@ -1,33 +1,1054 @@
+[{
+  "_id": {
+    "$oid": "6858114d77d184c7a8278aef"
+  },
+  "userName": "Arkapravo Das",
+  "userEmail": "arkapravodas03@gmail.com",
+  "userPassword": "$2b$12$xrlRXZ.QVVUOfIKWsA0GKuJ52C.gaUROSe/zS/RsyC4K92uGrmQ6G",
+  "userPhoneNumber": "9007910106",
+  "countryCode": "+91",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "26/12 A Pathak Para Road, Behala, Kolkata-700060",
+    "currentAddress": "26/12 A Pathak Para Road, Behala, Kolkata-700060"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [
+    "Hello Bunny"
+  ],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODU4MTE0ZDc3ZDE4NGM3YTgyNzhhZWYiLCJpYXQiOjE3NTE3MDA2MTMsImV4cCI6MTc1MjMwNTQxM30.klH2kdB3HQwOOykTAzRcAs5jYTBaiuCqizhJ4TT9LOU",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-22T14:21:01.108Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T07:30:13.356Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-22T14:21:01.113Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T07:30:13.356Z"
+  },
+  "__v": 0
+},
 {
-    Name: "Student_1",
-    Email: "stud_1@gmail.com",
-    Password: "Student001",
-    Address: "Somewhere in India",
-    Phone: "+91 0000000001",
-    Role: "Student",
-    Skills: ["JavaScript", "React", "Node.js", "Python"],
-    Goals: [
-        {
-            Task: "Finish DAA Quiz",
-            DueTime: "10:00 AM",
-            DueDate: "2024-01-15",
-            Status: "in-progress",
-            Progress: 40,
-            Priority: 0,
-        },
-        {
-            Task: "Review OS Notes",
-            DueTime: "12:00 PM",
-            Status: "deadline-approaching",
-            Progress: 0,
-            Priority: 0,
-        },
-        {
-            Task: "Push updates to GitHub",
-            DueTime: "03:00 PM",
-            Status: "completed",
-            Progress: 100,
-            Priority: 0,
-        },
-    ]
-}
+  "_id": {
+    "$oid": "685952bbd3f35fa39ce27d51"
+  },
+  "userName": "Rajshree Bhalshankar",
+  "userEmail": "bhalshankarrajshree@gmail.com",
+  "userPassword": "$2b$12$jxtDALSsVSaw3eUrhx7MIuRkRVooFTo7a8i6sXvMlouebV9rCAE0K",
+  "userPhoneNumber": "9028421555",
+  "countryCode": "+91",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "Paithan Road",
+    "currentAddress": "Sambhaji Nagar"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-23T13:12:27.662Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:18:13.134Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-23T13:12:27.666Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:18:19.483Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0299f8787dd43284bce1"
+  },
+  "userName": "Alice Johnson",
+  "userEmail": "student1@example.com",
+  "userPassword": "$2b$12$VGuPGN5kvfQFdvmqTTFvHu/4/SWQse2rbXMU7us7Ed5jUkSlRUdfW",
+  "userPhoneNumber": "(555) 100-0001",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "123 Maple Street, Chicago, IL",
+    "currentAddress": "45 River Road, Chicago, IL"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODVhMDI5OWY4Nzg3ZGQ0MzI4NGJjZTEiLCJpYXQiOjE3NTE3MTAyNzksImV4cCI6MTc1MjMxNTA3OX0.y_QjFWimjjm-WlJ3AY1wRNZBkYs4Sf9__lJAph7D8p4",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:42:49.547Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T10:11:19.161Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:42:49.547Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T10:11:19.161Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a02daf8787dd43284bcec"
+  },
+  "userName": "Bob Martinez",
+  "userEmail": "student2@example.com",
+  "userPassword": "$2b$12$lMTYtSPzgflSEIdVhhbjLOD.qQ0e0AxbtZEifWv8WKJV7Kzt58Vb.",
+  "userPhoneNumber": "(555) 100-0002",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "22 Oak Lane, Austin, TX",
+    "currentAddress": "78 Cedar Drive, Austin, TX"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:43:54.674Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:43:56.006Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:43:54.674Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:44:04.195Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0324f8787dd43284bcf7"
+  },
+  "userName": "http://localhost:5173/register",
+  "userEmail": "student3@example.com",
+  "userPassword": "$2b$12$X2aS7XlvgfhPB4G/jHbF1uYT7FvCJY/EAnMxDRQVRO5wDBJxqOMdS",
+  "userPhoneNumber": "(555) 100-0003",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "90 Palm St, San Diego, CA",
+    "currentAddress": "77 Valley Rd, San Diego, CA"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:45:08.707Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:45:10.141Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:45:08.707Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:45:27.143Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0364f8787dd43284bd06"
+  },
+  "userName": "David Lee",
+  "userEmail": "student4@example.com",
+  "userPassword": "$2b$12$5qQuag/NI8EwQtJpZ4a6LeYR82RjdPXRjaev.Aqbwsnpe2QluZPtW",
+  "userPhoneNumber": "(555) 100-0004",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "10 Elm Ave, Miami, FL",
+    "currentAddress": "501 Ocean Blvd, Miami, FL"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:46:12.094Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:46:13.527Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:46:12.095Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:46:20.956Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0390f8787dd43284bd11"
+  },
+  "userName": "Eva Chen",
+  "userEmail": "student5@example.com",
+  "userPassword": "$2b$12$P/NSY8UX6zPYJT1JnUOc7OKpqyydpHfMdywbpMeT2NY2K7iwCXqSG",
+  "userPhoneNumber": "(555) 100-0005",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "230 Cherry Tree Ln, Seattle, WA",
+    "currentAddress": "800 Rainier Way, Seattle, WA"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:46:56.853Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:46:58.100Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:46:56.853Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:47:02.885Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a03b5f8787dd43284bd1c"
+  },
+  "userName": "Frank Green",
+  "userEmail": "student6@example.com",
+  "userPassword": "$2b$12$HxzQGiYeY7t/.qRexTtOrehQ56b4ZLWxhvPN3C9lztk2ffYAOEkny",
+  "userPhoneNumber": "(555) 100-0006",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "88 Willow St, Denver, CO",
+    "currentAddress": "88 Willow St, Denver, CO"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:47:33.299Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:47:34.525Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:47:33.300Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:47:39.662Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a03e2f8787dd43284bd27"
+  },
+  "userName": "Grace Adams",
+  "userEmail": "student7@example.com",
+  "userPassword": "$2b$12$ynIQuzxQisem9o3S4m4W3udZGNoeArokDt/Fx8c6Np9NzvCdmzcM6",
+  "userPhoneNumber": "(555) 100-0007",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "456 Birch Rd, Boston, MA",
+    "currentAddress": "456 Birch Rd, Boston, MA"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:48:18.557Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:48:19.892Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:48:18.558Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:48:25.727Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a040bf8787dd43284bd32"
+  },
+  "userName": "Henry Patel",
+  "userEmail": "student8@example.com",
+  "userPassword": "$2b$12$15.AXbIDhbimazD2So7eq.dbVgzqKvfsMbVsdKMcqvcoQZpZuWFq2",
+  "userPhoneNumber": "(555) 100-0008",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "120 Vine St, New York, NY",
+    "currentAddress": "300 Liberty St, New York, NY"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:48:59.826Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:49:01.069Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:48:59.827Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:50:31.970Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0499f8787dd43284bd3d"
+  },
+  "userName": "Isabella Wright",
+  "userEmail": "student9@example.com",
+  "userPassword": "$2b$12$cGVBoAaOUAPxm3qJa44j6.lujdW062dfuvCSmTFc5Z2tB5lQ8omhm",
+  "userPhoneNumber": "(555) 100-0009",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "312 Spruce St, Atlanta, GA",
+    "currentAddress": "312 Spruce St, Atlanta, GA"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:51:21.856Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:51:23.083Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:51:21.857Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:51:28.705Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a04fff8787dd43284bd48"
+  },
+  "userName": "Jack Robinson",
+  "userEmail": "student10@example.com",
+  "userPassword": "$2b$12$3xC.oEtVwFj/lRnZWnMyHubiF1ZfL26RtNM1n5bl/fGo0ezeXCbka",
+  "userPhoneNumber": "(555) 100-0010",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:53:03.128Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:53:04.542Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:53:03.129Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:53:22.895Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a052cf8787dd43284bd53"
+  },
+  "userName": "Karen Baker",
+  "userEmail": "student11@example.com",
+  "userPassword": "$2b$12$Y1O8BgW2f9dTzqragx8xTOKuPNIqvNMJ.ysa13kHTLjiS08jQgea.",
+  "userPhoneNumber": "(555) 100-0011",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:53:48.662Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:53:50.028Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:53:48.662Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:54:03.855Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0551f8787dd43284bd5e"
+  },
+  "userName": "Liam Torres",
+  "userEmail": "student12@example.com",
+  "userPassword": "$2b$12$ACNFVgkipU9zftwSDYXAm.ldkvSIZe72drFTDwzoPHITNITF/eY.K",
+  "userPhoneNumber": "(555) 100-0012",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:54:25.971Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:54:27.302Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:54:25.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:58:08.883Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0652f8787dd43284bd69"
+  },
+  "userName": "Mia Clark",
+  "userEmail": "student13@example.com",
+  "userPassword": "$2b$12$KyTgE1Ns7QMNIe4IpjSpQO3tAqbURItOH72Y0.b2VVruKXD3o7eNm",
+  "userPhoneNumber": "(555) 100-0013",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:58:42.791Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:58:44.327Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:58:42.791Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:58:56.001Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0675f8787dd43284bd74"
+  },
+  "userName": "Noah Campbell",
+  "userEmail": "student014@example.com",
+  "userPassword": "$2b$12$mSoiPxolRVtQtlVTMflIfOc48ig/7vxtxfM8GAuSnH95zkJ0cQdX2",
+  "userPhoneNumber": "(555) 100-0014",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T01:59:17.916Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T01:59:19.349Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T01:59:17.916Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T01:59:25.291Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a06a9f8787dd43284bd7f"
+  },
+  "userName": "Olivia Rivera",
+  "userEmail": "student15@example.com",
+  "userPassword": "$2b$12$hlbwggQtbr3YFNDENKH/Q.og922HppRI29gQ8YXT4.P7zuDTV.dby",
+  "userPhoneNumber": "(555) 100-0015",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "Paithan Road",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T02:00:09.628Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T02:00:11.112Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T02:00:09.628Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T02:00:25.193Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a06cdf8787dd43284bd8a"
+  },
+  "userName": "Paul Morris",
+  "userEmail": "student16@example.com",
+  "userPassword": "$2b$12$sbg8cvuAZ5ZfNgPACwsPpeLgR1jTuOtzhT5apy4Gp1q.iuTyn7qyO",
+  "userPhoneNumber": "(555) 100-0016",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T02:00:45.263Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T02:00:46.390Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T02:00:45.263Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T02:00:54.583Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0707f8787dd43284bd95"
+  },
+  "userName": "Quinn Evans",
+  "userEmail": "student17@example.com",
+  "userPassword": "$2b$12$sdv1Axh.O0zbEi20dFgp8ugovnNRYPvhULzsSG0MsPcfzXf/ZumRq",
+  "userPhoneNumber": "(555) 100-0017",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "Kumbhar Pimpalgaon",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T02:01:43.120Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T02:01:44.451Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T02:01:43.120Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-24T02:01:51.213Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685a0725f8787dd43284bda0"
+  },
+  "userName": "Ryan Hughes",
+  "userEmail": "student18@example.com",
+  "userPassword": "$2b$12$8RJLd6d/TXzxsGwnNGqW3OALyoTxalWPiqZPPkma0FvM8uAF/GFky",
+  "userPhoneNumber": "(555) 100-0018",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "brooklyn",
+    "currentAddress": "bhalshankarrajshree@gmail.com"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODVhMDcyNWY4Nzg3ZGQ0MzI4NGJkYTAiLCJpYXQiOjE3NTA4MTIxNzAsImV4cCI6MTc1MTQxNjk3MH0.qA7Vxwkip0TYdzOA8NW64GEM2-VQzPdoricqukTwq_Q",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T02:02:13.431Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-06-24T02:02:14.970Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T02:02:13.433Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-25T00:42:50.074Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "685acb7dc9e19754e7f672d1"
+  },
+  "userName": "TVM",
+  "userEmail": "tatikondamanvitha23@gmail.com",
+  "userPassword": "$2b$12$EPvKIqr0H091DXtO1N0Wse.hePMbNO5etPocMxUsImrC6LHA3Tacq",
+  "userPhoneNumber": "9441581350",
+  "countryCode": "+91",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "ongole",
+    "currentAddress": "ong"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [
+    "python"
+  ],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-06-24T15:59:57.213Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T10:12:42.379Z"
+  },
+  "createdAt": {
+    "$date": "2025-06-24T15:59:57.217Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T10:12:46.205Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6863a7aa89b35056a1c4d357"
+  },
+  "userName": "Teacher_1",
+  "userEmail": "teacher1@gmail.com",
+  "userPassword": "$2b$12$Vv4pyPgxKQavNy0LzLZZwey3YMuSa8dkBsR6RyTnTkxqXhwUqfd4m",
+  "userPhoneNumber": "1234567890",
+  "countryCode": "+1",
+  "userRole": "teacher",
+  "userLocation": {
+    "homeAddress": "Address1",
+    "currentAddress": "Address1"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODYzYTdhYTg5YjM1MDU2YTFjNGQzNTciLCJpYXQiOjE3NTE0MzE1NjUsImV4cCI6MTc1MjAzNjM2NX0.80gAm3_35N-_zX84yQWJwtDTbc1L909dS33Xl6i364k",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-01T09:17:30.090Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-01T18:03:45.670Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-01T09:17:30.092Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-02T04:46:05.368Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6868d586e5d3131e357516f6"
+  },
+  "userName": "Student_1",
+  "userEmail": "stud_1@gmail.com",
+  "userPassword": "$2b$12$oCXL03054QbWMnjmlljAieCLWAQoX6U2UgyGzxXXIrfrSxErKGJsC",
+  "userPhoneNumber": "0000000001",
+  "countryCode": "+91",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "Somewhere in India",
+    "currentAddress": "Somewhere in India"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODY4ZDU4NmU1ZDMxMzFlMzU3NTE2ZjYiLCJpYXQiOjE3NTE3MjgyODcsImV4cCI6MTc1MjMzMzA4N30.1C77CDM1TtLYzSxP4bSjMPxlmFKADUX4GS1kv7tODWM",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T07:34:30.205Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T15:11:28.034Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T07:34:30.206Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T15:11:28.034Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6868f0ed23f38e433924e73a"
+  },
+  "userName": "Mannu",
+  "userEmail": "manvithatatikonda23@gmail.com",
+  "userPassword": "$2b$12$a26wP/VhFN4DJDguJNN/iesGVc2J3D.DmNvi8MkYmwq6vAlEfERDy",
+  "userPhoneNumber": "6302251158",
+  "countryCode": "+91",
+  "userRole": "teacher",
+  "userLocation": {
+    "homeAddress": "onl",
+    "currentAddress": "onl"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T09:31:25.035Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-06T13:21:03.533Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T09:31:25.036Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-06T13:25:04.749Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68693800f73f4d7a0bb08bdf"
+  },
+  "userName": "Std1",
+  "userEmail": "std1@gmail.com",
+  "userPassword": "$2b$12$iVxeBvdc4JL3sVCC2MRKt.2D9OVnBXY6X.bnuTyd5VW1E2qbIeGsy",
+  "userPhoneNumber": "0000000101",
+  "countryCode": "+91",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "ol",
+    "currentAddress": "ol"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T14:34:40.008Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T14:34:41.392Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T14:34:40.009Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T14:35:09.426Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6869383ff73f4d7a0bb08bea"
+  },
+  "userName": "std2",
+  "userEmail": "std2@gmail.com",
+  "userPassword": "$2b$12$8a/gWt1WWFF9N2BSohf9o.DHVwJGyaly8s9tlqnX6fUvxvpeWyY6u",
+  "userPhoneNumber": "0000000102",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "ol",
+    "currentAddress": "ol"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T14:35:43.120Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T14:35:44.536Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T14:35:43.121Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T14:35:49.587Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68693879f73f4d7a0bb08bf5"
+  },
+  "userName": "std3",
+  "userEmail": "std3@gmail.com",
+  "userPassword": "$2b$12$vkFFQB21dSGNZYlfLDBmo.6T1cG.wtrEOs2u9BoyhohxTndYUCGM6",
+  "userPhoneNumber": "0000000103",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "ol",
+    "currentAddress": "ol"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T14:36:41.001Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T14:36:42.656Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T14:36:41.001Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T14:36:52.061Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "686938c7f73f4d7a0bb08c00"
+  },
+  "userName": "std4",
+  "userEmail": "std4@gmail.com",
+  "userPassword": "$2b$12$tn.INw8yg1/oxOdFJhOXWeaCz7TBzpcrzIO6QhCETNYXgAgsH1kMS",
+  "userPhoneNumber": "000000104",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "ol",
+    "currentAddress": "ol"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": null,
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T14:37:59.543Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T14:38:01.564Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T14:37:59.544Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T14:38:11.608Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68693908f73f4d7a0bb08c0b"
+  },
+  "userName": "std5",
+  "userEmail": "std5@gmail.com",
+  "userPassword": "$2b$12$TR0afmz8GAAHwGrefEgouekTa8WCD6n1uQrWhL1a/Xy0tiSCVIaES",
+  "userPhoneNumber": "0000000105",
+  "countryCode": "+1",
+  "userRole": "student",
+  "userLocation": {
+    "homeAddress": "ol",
+    "currentAddress": "ol"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODY5MzkwOGY3M2Y0ZDdhMGJiMDhjMGIiLCJpYXQiOjE3NTE3MjYzNDgsImV4cCI6MTc1MjMzMTE0OH0.NW2WvwfwPZYn6bqxcqHSIAma3tdwdIuvKswnFi0DwTI",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-05T14:39:04.524Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-05T14:39:08.639Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-05T14:39:04.525Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-05T14:39:08.640Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "686a794eba03db52ebcc13e1"
+  },
+  "userName": "admin",
+  "userEmail": "admin@gmail.com",
+  "userPassword": "$2b$12$a57grbXfexf/LqEmAjkwkOZJB6JyMwFqx6BweHyubTP8kpUD8IS7u",
+  "userPhoneNumber": "1010101010",
+  "countryCode": "+1",
+  "userRole": "admin",
+  "userLocation": {
+    "homeAddress": "ad",
+    "currentAddress": "ad"
+  },
+  "userBio": "",
+  "userProfileImage": "",
+  "userCoverImage": "",
+  "userSkills": [],
+  "isActive": true,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODZhNzk0ZWJhMDNkYjUyZWJjYzEzZTEiLCJpYXQiOjE3NTE4MDgzMzUsImV4cCI6MTc1MjQxMzEzNX0.8HrRbzrOl0Ee_X8HlDCBM1LXy856rjkboORPP46vK6I",
+  "userSocialMediaProfiles": [],
+  "userJoiningDate": {
+    "$date": "2025-07-06T13:25:34.465Z"
+  },
+  "userLastLogin": {
+    "$date": "2025-07-06T13:25:35.779Z"
+  },
+  "createdAt": {
+    "$date": "2025-07-06T13:25:34.470Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-06T13:25:35.779Z"
+  },
+  "__v": 0
+}]

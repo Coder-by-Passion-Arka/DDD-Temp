@@ -121,7 +121,7 @@ import {
   TrendingUp,
 } from "lucide-react";  
 import { useAuth } from "../contexts/AuthContext";
-// import { apiService } from "../services/api";
+import { apiService } from "../services/api";
 
 interface EvaluationScore {
   criteriaName: string;
@@ -402,10 +402,8 @@ const EvaluationPage: React.FC = () => {
       };
 
       // TODO: Replace with actual API call
-      /*
       const response = await apiService.get('/evaluations/user');
       const actualData: EvaluationData = response.data;
-      */
 
       await new Promise((resolve) => setTimeout(resolve, 800));
       setEvaluationData(mockData);
@@ -420,9 +418,8 @@ const EvaluationPage: React.FC = () => {
   const handleStartEvaluation = async (evaluation: Evaluation) => {
     try {
       // TODO: Update status to in_progress
-      /*
+
       await apiService.patch(`/evaluations/${evaluation._id}/start`);
-      */
 
       setSelectedEvaluation(evaluation);
       setShowEvaluationModal(true);
@@ -449,9 +446,7 @@ const EvaluationPage: React.FC = () => {
   const handleSubmitEvaluation = async (evaluationData: any) => {
     try {
       // TODO: Submit evaluation
-      /*
       await apiService.patch(`/evaluations/${selectedEvaluation._id}/submit`, evaluationData);
-      */
 
       console.log("Submitting evaluation:", evaluationData);
 

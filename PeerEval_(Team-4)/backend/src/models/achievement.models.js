@@ -18,6 +18,7 @@ const achievementSchema = new mongoose.Schema(
       trim: true,
     },
     type: {
+      // Here are some of the several types of possible achievements
       type: String,
       enum: [
         "first_assignment",
@@ -26,10 +27,11 @@ const achievementSchema = new mongoose.Schema(
         "assignment_streak",
         "skill_master",
         "collaboration_champion",
-        "feedback_hero",
+        "feedback_master",
         "academic_excellence",
         "consistent_performer",
-        "mentor"
+        "mentor_appreciation",
+        "subject_master",
       ],
       required: true,
     },

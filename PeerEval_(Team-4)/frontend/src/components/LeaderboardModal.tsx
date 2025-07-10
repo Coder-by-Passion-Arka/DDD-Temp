@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { X, Trophy, Medal, Award, Star, TrendingUp } from "lucide-react";
+import { 
+  X, 
+  Trophy, 
+  Medal, 
+  Award, 
+  Star, 
+  TrendingUp 
+} from "lucide-react";
 
 interface LeaderboardEntry {
   id: string;
